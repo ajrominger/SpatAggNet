@@ -1,0 +1,18 @@
+---
+title: "Supplament to \"Spatial aggregation confounds null model-based inference of species association networks\""
+author: "Andrew J. Rominger"
+format:
+  pdf:
+    number-sections: true
+    keep-tex: true
+    include-in-header: 
+      text: |
+        \renewcommand{\thefigure}{S\arabic{figure}}
+        \renewcommand{\thesection}{S\arabic{section}}
+crossref:
+  fig-title: "Supplementary Figure"
+  fig-prefix: "Supplementary Figure"
+csl: mee.csl
+bibliography: SpatAggNet.bib
+---
+
