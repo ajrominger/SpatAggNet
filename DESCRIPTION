@@ -16,7 +16,6 @@ Depends:
 Imports:
     vegan,
     picante,
-    spaa, 
     igraph,
     parallel, 
     viridis, 
@@ -26,5 +25,6 @@ Imports:
     dplyr,
     ggplot2
 Suggests:
+    spaa, 
     testthat
 RoxygenNote: 7.3.2
