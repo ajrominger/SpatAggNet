@@ -89,4 +89,40 @@ In the absence of ISSA, abundances of a species across sites should follow a Poi
 
 The present work complements a recent uptick in critical and cautionary assessments of approaches seeking to infer ecological network from abundance data [@freilich2018; @barner2018; @carr2019; @blanchet2020]. The combined message of these contributions is that abundance-derived inferences of species associations should be viewed cautiously until other data can be brought to bear on the actuality of real associations.
 
+## Methods
+
+### Analysis of empirical data
+
+- purpose: show the issue
+- data from rareplusminus
+- get sad and ssad from those data
+    - pois
+    - nb
+    - model selection of pois and nb
+- look at networks for real data versus data simulated from sad and ssad
+    - pois
+    - nb
+- report on rareplusminus stuff
+
+### Simulation experiment
+
+- purpose: show the issue persists across different methods
+- start with data simulated from sad and ssad
+    - include pois and nb
+- make networks based on diff perm methods and diff distance metrics
+
+
+### Behavior of negative binomial random variables subjected to permutation 
+
+- show that k is distorted 
+
+
+## Results
+
+### Analysis of empirical data
+
+### Simulation experiment
+
+## Discussion
+
 ## References
