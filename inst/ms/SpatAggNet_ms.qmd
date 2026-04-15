@@ -10,16 +10,10 @@ format:
         \externaldocument{ab_supp}
         \newcommand{\sfig}[1]{Supplementary Figure~\ref{#1}}
         \newcommand{\ssec}[1]{Supplementary Section~\ref{#1}}
+        \usepackage{lineno}
 csl: mee.csl
 bibliography: SpatAggNet.bib
 ---
-
-## Abstract 
-
-
-
-
-## Introduction
 
 
 ```{r}
@@ -66,4 +60,30 @@ quarto::quarto_render("SpatAggNet_supp.qmd", quiet = FALSE)
 tinytex::xelatex("SpatAggNet_supp.tex", clean = FALSE)
 ```
 
+
+
+
+
+\linenumbers
+
+## Abstract 
+
+
+
+
+## Introduction
+
+Species interactions are central to the evolutionary origins of biodiversity and the maintenance of that diversity in ecological assemblages []. Network theory has come to be a central paradigm in ecology and evolution, and so, not surprisingly, these interactions are often cast as ecological networks.  
+
+Abundance or presence/absence data are among the most prevalent and accessible ecological data, and have consequentially been frequently leveraged [] to attempt to infer species interactions (or more accurately associations), beginning at least in the early 1900s []. The data specifically used for constructing association networks are often site by species matrices where each cell in the matrix records the abundance (or presence/absence) of a given species at a given site (i.e. sampling location). For simplicity I will refer to both abundance and presence/absence data as simply "abundance data" and focus on true abundance data with the assumed implication that methodological limitations in the case of true abundances will be even more confounding for presence/absence scenarios [].
+
+Two salient insights from decades of debate about using abundance data to infer ecological processes are: 1) interactions in the strict sense cannot be inferred, but *species associations* might be recoverable and these *associations* are assumed to map onto a combination of species-species and species-environment interactions []; and 2) robust null models are necessary for any inference to identify which patterns in the data are likely to arise by chance and which are likely to carry biological signal []. 
+
+Null models seek to generate plausible data, and patterns in data, while stripping away the actual relationships between species in the data []. Most often a null model is achieved by repeatedly permuting the original data such that any real associations are removed because which species co-occur has been randomized by permutation []. The collection of all such permutations represents a null distribution. These permutation approaches also seek to preserve key aspects of the original data such as maintaining the observed abundances of each species and/or maintaining the observed total number of individuals at each site []. These constraints are imposed in an attempt to control the rate of incorrect inference of the presence or absence of network links. Other methods for inferring association networks do exist, especially model-based inference applied in microbial ecology [], but are less frequently employed in community ecology (but see []).
+
+Here I raise a previously unreported technical issue with the approach of inferring association networks from abundance data in combination with null models. The issue arises from the near universal [] spatial aggregation of individuals within species.  The presence of intra-specific spatial aggregation (ISSA) causes all currently employed permutational null models to have exceedingly high type I error rates, i.e., incorrectly detecting associations when there are none. ISSA in itself is not evidence of species association---it can arise from a large number of processes including simple demographic drift [] in which species do not interact in any way with each other or shared environments. 
+
+In the absence of ISSA, abundances of a species across sites should follow a Poisson distribution []. Thus ISSA is often quantified as the deviation of observed data from a Poisson distribution []. Conversely, the negative binomial distribution can model spatially aggregated intra-specific abundances across sites []. Critically, the negative binomial arises very naturally in ecological processes as the distribution of population sizes in a birth-death-immigration model []. If the abundance of a species at a site is determined by local birth and death with supplemental individuals arriving by immigration from a source pool, then the probability distribution of repeatedly sampled abundances will follow a negative binomial []. In this way simple demographic drift (birth, death, and immigration that are purely stochastic) is expected to produced intra-specific abundances that are negative binomial-distributed and spatially aggregated.
+
+The present work complements a recent uptick in critical and cautionary assessments of approaches seeking to infer ecological network from abundance data []. The combined message of these contributions is that abundance-derived inferences of species associations should be viewed cautiously until other data can be brought to bear on the actuality of real associations.
 
