@@ -16,3 +16,205 @@ csl: mee.csl
 bibliography: SpatAggNet.bib
 ---
 
+```{r}
+#| label: knitr-setup
+#| include: false
+
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+## Reproducibility
+
+The results of this study can be fully reproduced by installing the package *SpatAggNet* written in R [@rcore] and available on GitHub. *SpatAggNet* has a dependency on the custom pacakge *pika* also available from GitHub. *pika* must be installed first for *SpatAggNet* to install.
+
+```{r}
+#| label: install
+
+pika_pack <- require(pika)
+if(!pika_pack) install_github("ajrominger/pika")
+
+this_pack <- require(SpatAggNet)
+if(!this_pack) install_github("ajrominger/SpatAggNet")
+```
+
+The *SpatAggNet* package includes documented [@roxygen2] and unit-tested [@testthat] functions to carry out all analyses.
+
+The following R computing environment is used for all simulations and analyses:
+
+
+```{r}
+#| label: setup
+
+library(SpatAggNet)
+library(pika)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(cowplot)
+library(knitr)
+
+# set caching to true for subsequent code chunks
+opts_chunk$set(cache = TRUE)
+
+library(parallel)
+
+# threading defaults
+nthrd <- detectCores()
+nthrd <- ifelse(round(nthrd * 0.8) >= nthrd - 1 & nthrd > 1, 
+                nthrd - 1, 
+                round(nthrd * 0.8))
+
+
+sessionInfo() |> 
+    print(locale = FALSE)
+
+```
+
+
+The quarto [@quarto] document used to generate this supplement can be found with the R command `system.file("ms/SpatAggNet_supp.qmd", package = "SpatAggNet")`.
+
+
+## Computing spatial abundance distributions
+
+The data included with the *SpatAggNet* package are from @calatayud2019 and take the form of a list of site by species matrices. In order to investigate the affect of intra-specific spatial aggregation (ISSA) on inferred networks, we first calculate the parameters of the species abundance distribution (SAD) for each data set and the intra-specific spatial abundance distributions (SSAD) for each species in each data set. The `nb_fit` function from *SpatAggNet* computes SSAD parameters as well as summary statistics including goodness of fit.
+
+```{r}
+#| label: ssad-stats
+
+# load list of site by species matrices
+data('abund_mats')
+
+# remove decimals and empty rows/columns
+obsdat <- lapply(abund_mats, function(x) {
+    x <- ceiling(x)
+    x <- x[rowSums(x) > 0, colSums(x) > 0]
+    
+    return(x)
+})
+
+# SSAD statistics for each species in each data set
+ssad_stats <- mclapply(obsdat, 
+                       mc.cores = nthrd, 
+                       FUN = function(x) {
+                           nb_info <- nb_fit(x)
+                           cbind(nsite = nrow(x), nspp = ncol(x), 
+                                 J = sum(x), nb_info)
+                       }) |> 
+    bind_rows(.id = "study")
+```
+
+
+### Prevelance of the negative binomial SSAD
+
+We would like to know how prevalent the negative binomial SSAD is in the data studied here. This is complicated by the fact that the negative binomial likelihood function does not have a finite maximum when the mean of the data is greater than or equal to the variance. In the data studied here, we see the greatest proportion of cases where $\mathbb{E}[x] \geq \mathbb{Var}[x]$ for rare species and when the number of spatial replicates is small [@fig-inf-k]. Unstable estimation for rare species with small sample size is to be expected, but combined with the fact that most species are rare, it is a challenge to assess the prevalence of the negative binomial SSAD. 
+
+```{r}
+#| label: fig-inf-k
+#| fig-width: 5
+#| fig-height: 3
+#| fig-cap: |
+#|     Cumulative probability of encountering a species with an undefined 
+#|     log likelihood function. Probability accumulates from right to left 
+#|     and top to bottom. This highlights the difficulty of fitting a 
+#|     negative binomial distribution to rare species in data sets with few
+#|     sites.
+
+abund_nsite <- expand.grid(abund = 1:40, nsite = 10:90)
+
+bad_k <- sapply(1:nrow(abund_nsite), function(i) {
+    j <- ssad_stats$abund > abund_nsite$abund[i] &
+        ssad_stats$nsite > abund_nsite$nsite[i]
+    
+    mean(!is.finite(ssad_stats$size[j]))
+})
+
+prop_finite_k <- data.frame(abund_nsite, bad_k)
+
+
+ggplot(prop_finite_k, aes(abund, nsite, fill = bad_k)) +
+    geom_tile() +
+    scale_fill_viridis_c(name = "Cumulative\nprob. of\nundefined\nlog like") +
+    theme_cowplot() +
+    scale_y_continuous(breaks = c(10, 30, 50, 70, 90)) +
+    xlab("Total species abundance") +
+    ylab("Number of sites in study")
+```
+
+I therefore take two approaches to assessing the prevalence of the negative binomial SSAD:
+
+1. where the likelihood is defined, I compare the support for a negative binomial versus a Poisson model with AIC
+2. for all the data, whether the likelihood is undefined or defined, I evaluate the goodness of fit of the negative binomial model to the data (described in more detail below)
+
+```{r}
+#| label: fig-aic
+#| fig-width: 4
+#| fig-height: 3
+#| fig-cap: |
+#|     Proportion of species favoring a negative binomial or Poisson 
+#|     distribution. Model selection is shown across bins of total
+#|     species abundance
+
+mod_select <- filter(ssad_stats, is.finite(size)) |> 
+    mutate(log_abund_bin = cut(abund, 12)) |> 
+    group_by(log_abund_bin) |> 
+    summarize(n_nb = sum(delta_AIC < 0), 
+              n_pois = sum(delta_AIC > 0)) |> 
+    ungroup() |> 
+    pivot_longer(cols = !log_abund_bin, 
+                 names_to = "model", 
+                 values_to = "freq")
+
+
+ggplot(mod_select, aes(log_abund_bin, freq, fill = model)) +
+    geom_bar(stat = "identity", position = "fill") +
+    theme_cowplot()
+
+
+```
+
+
+@fig-aic shows that the negative binomial model is preferred over the Poisson an overwhelmingly majority of the time. Only for rare species is the Poisson occasionally favored by AIC. Even in those cases where Poisson is favored the average $\Delta \text{AIC}$ separating Poisson and negative binomial is foo
+
+## Computing species abundance distributions
+
+The package *pika* provides functions for fitting common species abundance distribution models. I use the `fitSAD` from *pika* to preform model selection on three standard SAD forms---the log-series, Poisson log-normal, and zero-truncated negative binomial---and record the best fit model and its parameter(s) for each data set.
+
+```{r}
+#| label: sad-stats
+
+# models to consider
+mods <- c('lseries', 'plnorm', 'tnegb')
+
+# loop over studies, fitting SAD models
+sad_stats <- mclapply(obsdat, 
+                      mc.cores = nthrd, 
+                      FUN = function(x) {
+    nsite <- nrow(x)
+    x <- colSums(x)
+    s <- fitSAD(x, mods)
+    
+    # which model is best supported
+    i <- which.min(sapply(s, AIC))
+    
+    # mle of params of bets model
+    o <- s[[i]]$MLE
+    
+    # if lseries is best, only has 1 param
+    if(i == 1) o <- c(o, NA)
+    
+    o <- c(mods[i], o, sum(x), length(x), nsite)
+    names(o) <- NULL
+    
+    return(o)
+}) |> 
+    do.call(rbind, args = _) |> 
+    as.data.frame()
+
+sad_stats <- cbind(study = rownames(sad_stats), sad_stats)
+names(sad_stats)[-1] <- c('mod', 'par1', 'par2', 'J', 'nspp', 'nsite')
+rownames(sad_stats) <- NULL
+
+```
+
+
+
