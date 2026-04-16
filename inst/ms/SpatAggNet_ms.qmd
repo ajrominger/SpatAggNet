@@ -93,22 +93,22 @@ The present work complements a recent uptick in critical and cautionary assessme
 
 ### Analysis of empirical data
 
-- purpose: show the issue
+- purpose: show the issue and that nb is the reason
 - data from rareplusminus
 - get sad and ssad from those data
     - pois
     - nb
     - model selection of pois and nb
-- look at networks for real data versus data simulated from sad and ssad
-    - pois
-    - nb
+- look at network stats for real data versus data simulated from sad and ssad
+    - pois: doesn't look like real data
+    - nb: looks close to real data
 - report on rareplusminus stuff
 
 ### Simulation experiment
 
 - purpose: show the issue persists across different methods
 - start with data simulated from sad and ssad
-    - include pois and nb
+    - only need to do nb
 - make networks based on diff perm methods and diff distance metrics
 
 
