@@ -146,34 +146,117 @@ I therefore take two approaches to assessing the prevalence of the negative bino
 2. for all the data, whether the likelihood is undefined or defined, I evaluate the goodness of fit of the negative binomial model to the data (described in more detail below)
 
 ```{r}
-#| label: fig-aic
+#| label: fig-aic-ssad
 #| fig-width: 4
 #| fig-height: 3
 #| fig-cap: |
 #|     Proportion of species favoring a negative binomial or Poisson 
 #|     distribution. Model selection is shown across bins of total
-#|     species abundance
+#|     species abundance. Bins are 100 wide from 0 to 800, then 
+#|     increase in width exponentially because fewer species have
+#|     very large abundances.
 
-mod_select <- filter(ssad_stats, is.finite(size)) |> 
-    mutate(log_abund_bin = cut(abund, 12)) |> 
-    group_by(log_abund_bin) |> 
-    summarize(n_nb = sum(delta_AIC < 0), 
-              n_pois = sum(delta_AIC > 0)) |> 
+mod_select <- filter(ssad_stats, 
+                     # only cases with defined likelihood
+                     is.finite(size)) |> 
+    # bin by abundance
+    mutate(abund_bin = cut(abund, c(seq(1, 800, length.out = 9), 
+                                    exp(seq(log(1000), log(max(abund)), 
+                                        length.out = 4))))) |> 
+    group_by(abund_bin) |> 
+    # calculations to plot bars with nb on top of pois
+    summarize(pois_max = mean(delta_AIC >= 0),
+              nb_max = mean(delta_AIC < 0) + pois_max, 
+              pois_min = 0, 
+              nb_min = pois_max) |> 
     ungroup() |> 
-    pivot_longer(cols = !log_abund_bin, 
-                 names_to = "model", 
-                 values_to = "freq")
+    # resolve upper and lower bounds of rects from
+    # output of `cut`
+    pivot_longer(cols = -abund_bin,
+                 names_to = c("model", ".value"),
+                 names_sep = "_") |> 
+    mutate(abund_max = gsub(".*,|\\]", "", abund_bin) |>
+               as.numeric(),
+           abund_min = gsub("\\(|,.*", "", abund_bin) |>
+               as.numeric())
+
+ggplot(mod_select, aes(xmin = abund_min, xmax = abund_max, 
+                       ymin = min, ymax = max, fill = model)) +
+    geom_rect(color = "black", linewidth = 0.5) +
+    scale_fill_discrete(name = "Model favored by AIC", 
+                        labels = c("Negative binomial", "Poisson"),
+                        palette = hsv(c(0.52, 0.08), c(1, 0.8), c(0.7, 0.9))) +
+    xlab("Total abundance") +
+    ylab("Proportion") +
+    theme_cowplot() +
+    theme(legend.position = c(0.92, 0.92),
+      legend.justification = c("right", "top"), 
+      legend.background = element_rect(fill = "white", color = "black"), 
+      legend.margin = margin(t = 2, r = 2, b = 2, l = 2))
+
+```
+
+```{r}
+#| label: pois-aic-calc
+#| echo: false
+
+# calculations for reporting about AIC favoring pois
+mean_pois_AIC <- mean(ssad_stats$delta_AIC[ssad_stats$delta_AIC >= 0])
+max_pois_AIC <- max(ssad_stats$delta_AIC[ssad_stats$delta_AIC >= 0])
+
+```
+
+@fig-aic-ssad shows that the negative binomial model is preferred over the Poisson an overwhelmingly majority of the time. Only for rare species is the Poisson occasionally favored by AIC. Even in those cases where Poisson is favored the average $\Delta \text{AIC}$ separating Poisson and negative binomial is `r round(mean_pois_AIC, 2)` with a maximum of `r round(max_pois_AIC, 2)`, meaning even when the Poisson is favored, it is only marginally favored.
+
+<!-- WORK ON Z-SQ stuff -->
 
 
-ggplot(mod_select, aes(log_abund_bin, freq, fill = model)) +
-    geom_bar(stat = "identity", position = "fill") +
-    theme_cowplot()
+In @fig-k-mod I also investigate the relationship of the clustering parameter $k$ with species relative abundance.  The purpose of this analysis is to be able to simulate random but realistic data.
+
+```{r}
+#| label: k-mod
+
+
+k_mod <- lm(logk ~ loga, 
+            data = filter(ssad_stats, is.finite(size)) |> 
+                mutate(loga = log(abund / J), 
+                       logk = log(size)))
+
+# a function to randomly draw a k value given abundance
+k_fun <- function(abund) {
+    J <- sum(abund)
+    
+    exp(predict(k_mod, newdata = data.frame(loga = log(abund / J))) +
+            rnorm(length(abund), sd = summary(k_mod)$sigma))
+}
+
+
+```
+
+```{r}
+#| label: fig-k-mod
+
+ggplot(filter(ssad_stats, is.finite(size)), 
+       aes(abund / J, size)) +
+    geom_point(alpha = 0.25) +
+    scale_x_log10() +
+    scale_y_log10() +
+    geom_smooth(method = "lm", se = FALSE, 
+                color = hsv(0.52, 1, 0.7))
+
+
+dat4k <- with(summStats[summStats$study %in%
+                            rownames(commStats[!is.na(commStats$pos.n), ]) &
+                            is.finite(summStats$size), ],
+              data.frame(logk = log(size),
+                         loga = log(abund / J),
+                         logS = log(nspp))
+)
 
 
 ```
 
 
-@fig-aic shows that the negative binomial model is preferred over the Poisson an overwhelmingly majority of the time. Only for rare species is the Poisson occasionally favored by AIC. Even in those cases where Poisson is favored the average $\Delta \text{AIC}$ separating Poisson and negative binomial is foo
 
 ## Computing species abundance distributions
 
@@ -202,17 +285,72 @@ sad_stats <- mclapply(obsdat,
     # if lseries is best, only has 1 param
     if(i == 1) o <- c(o, NA)
     
-    o <- c(mods[i], o, sum(x), length(x), nsite)
+    o <- c(i, o, sum(x), length(x), nsite)
     names(o) <- NULL
     
     return(o)
 }) |> 
     do.call(rbind, args = _) |> 
-    as.data.frame()
+    as.data.frame() 
 
 sad_stats <- cbind(study = rownames(sad_stats), sad_stats)
 names(sad_stats)[-1] <- c('mod', 'par1', 'par2', 'J', 'nspp', 'nsite')
 rownames(sad_stats) <- NULL
+sad_stats$mod <- mods[sad_stats$mod]
+
+```
+
+
+```{r}
+#| label: fig-aic-sad
+#| fig-width: 4
+#| fig-height: 3
+#| fig-cap: |
+#|     Proportion of studies favoring one of three possible species
+#|     abundance distribution models: log series, Poisson log normal, 
+#|     truncated negative binomial. Model preference is shown across 
+#|     different different total numbers of individuals recorded by 
+#|     each study. Bins start at a width of 175 from 1 to 1,400, then
+#|     expand in width exponentially. We see there is no consistent 
+#|     pattern for which model is favored across total number of 
+#|     individuals.
+
+sad_select <- filter(sad_stats) |> 
+    mutate(abund_bin = cut(J, c(seq(1, 1400, length.out = 9), 
+                                exp(seq(log(2000), log(max(J)), 
+                                        length.out = 4))))) |> 
+    group_by(abund_bin) |> 
+    summarize(lseries_max = mean(mod == "lseries"),
+              plnorm_max = mean(mod == "plnorm") + lseries_max, 
+              tnegb_max = mean(mod == "tnegb") + plnorm_max, 
+              lseries_min = 0, 
+              plnorm_min = lseries_max,
+              tnegb_min = plnorm_max) |> 
+    ungroup() |> 
+    pivot_longer(cols = -abund_bin,
+                 names_to = c("model", ".value"),
+                 names_sep = "_") |> 
+    mutate(abund_max = gsub(".*,|\\]", "", abund_bin) |>
+               as.numeric(),
+           abund_min = gsub("\\(|,.*", "", abund_bin) |>
+               as.numeric())
+
+ggplot(sad_select, aes(xmin = abund_min, xmax = abund_max, 
+                       ymin = min, ymax = max, fill = model)) +
+    geom_rect(color = "black", linewidth = 0.5) +
+    scale_fill_discrete(name = "Model favored\nby AIC", 
+                        labels = c("Log series", 
+                                   "Poisson log normal", 
+                                   "Truncated negative binomial"),
+                        palette = hsv(c(0.8, 0.7, 0.52), 
+                                      c(0.7, 0.8, 1), 
+                                      c(0.5, 0.9, 0.7))) +
+    xlab("Total individuals") +
+    ylab("Proportion") +
+    theme_cowplot() +
+    theme(legend.position = "top") +
+    guides(fill = guide_legend(nrow = 3))
+
 
 ```
 
