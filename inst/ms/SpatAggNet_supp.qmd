@@ -10,8 +10,8 @@ format:
         \renewcommand{\thefigure}{S\arabic{figure}}
         \renewcommand{\thesection}{S\arabic{section}}
 crossref:
-  fig-title: "Supplementary Figure"
-  fig-prefix: "Supplementary Figure"
+  fig-title: "Supp. Figure"
+  fig-prefix: "Supp. Figure"
 csl: mee.csl
 bibliography: SpatAggNet.bib
 ---
@@ -51,11 +51,8 @@ library(dplyr)
 library(tidyr)
 library(ggplot2)
 library(cowplot)
+library(halfmoon)
 library(knitr)
-
-# set caching to true for subsequent code chunks
-opts_chunk$set(cache = TRUE)
-
 library(parallel)
 
 # threading defaults
@@ -76,24 +73,40 @@ The quarto [@quarto] document used to generate this supplement can be found with
 
 ## Computing spatial abundance distributions
 
-The data included with the *SpatAggNet* package are from @calatayud2019 and take the form of a list of site by species matrices. In order to investigate the affect of intra-specific spatial aggregation (ISSA) on inferred networks, we first calculate the parameters of the species abundance distribution (SAD) for each data set and the intra-specific spatial abundance distributions (SSAD) for each species in each data set. The `nb_fit` function from *SpatAggNet* computes SSAD parameters as well as summary statistics including goodness of fit.
+The data included with the *SpatAggNet* package are from @calatayud2019 and take the form of a list of site by species matrices. 
 
 ```{r}
-#| label: ssad-stats
+#| label: data
 
-# load list of site by species matrices
-data('abund_mats')
+# load list of site by species matrices provided in SpatAggNet
+data("abund_mats")
 
 # remove decimals and empty rows/columns
-obsdat <- lapply(abund_mats, function(x) {
+obs_dat <- lapply(abund_mats, function(x) {
     x <- ceiling(x)
     x <- x[rowSums(x) > 0, colSums(x) > 0]
     
     return(x)
 })
 
+```
+
+```{r}
+#| label: cache-2-true
+#| include: false
+
+# set caching to true for subsequent code chunks
+opts_chunk$set(cache = TRUE)
+
+```
+
+In order to investigate the affect of intra-specific spatial aggregation (ISSA) on inferred networks, we first calculate the parameters of the species abundance distribution (SAD) for each data set and the intra-specific spatial abundance distributions (SSAD) for each species in each data set. The `nb_fit` function from *SpatAggNet* computes SSAD parameters as well as summary statistics including goodness of fit.
+
+```{r}
+#| label: ssad-stats
+
 # SSAD statistics for each species in each data set
-ssad_stats <- mclapply(obsdat, 
+ssad_stats <- mclapply(obs_dat, 
                        mc.cores = nthrd, 
                        FUN = function(x) {
                            nb_info <- nb_fit(x)
@@ -110,6 +123,7 @@ We would like to know how prevalent the negative binomial SSAD is in the data st
 
 ```{r}
 #| label: fig-inf-k
+#| dependson: ssad-stats
 #| fig-width: 5
 #| fig-height: 3
 #| fig-cap: |
@@ -147,6 +161,7 @@ I therefore take two approaches to assessing the prevalence of the negative bino
 
 ```{r}
 #| label: fig-aic-ssad
+#| dependson: ssad-stats
 #| fig-width: 4
 #| fig-height: 3
 #| fig-cap: |
@@ -198,6 +213,7 @@ ggplot(mod_select, aes(xmin = abund_min, xmax = abund_max,
 
 ```{r}
 #| label: pois-aic-calc
+#| dependson: ssad-stats
 #| echo: false
 
 # calculations for reporting about AIC favoring pois
@@ -215,7 +231,7 @@ In @fig-k-mod I also investigate the relationship of the clustering parameter $k
 
 ```{r}
 #| label: k-mod
-
+#| dependson: ssad-stats
 
 k_mod <- lm(logk ~ loga, 
             data = filter(ssad_stats, is.finite(size)) |> 
@@ -235,6 +251,7 @@ k_fun <- function(abund) {
 
 ```{r}
 #| label: fig-k-mod
+#| dependson: ssad-stats
 
 ggplot(filter(ssad_stats, is.finite(size)), 
        aes(abund / J, size)) +
@@ -243,17 +260,6 @@ ggplot(filter(ssad_stats, is.finite(size)),
     scale_y_log10() +
     geom_smooth(method = "lm", se = FALSE, 
                 color = hsv(0.52, 1, 0.7))
-
-
-dat4k <- with(summStats[summStats$study %in%
-                            rownames(commStats[!is.na(commStats$pos.n), ]) &
-                            is.finite(summStats$size), ],
-              data.frame(logk = log(size),
-                         loga = log(abund / J),
-                         logS = log(nspp))
-)
-
-
 ```
 
 
@@ -269,7 +275,7 @@ The package *pika* provides functions for fitting common species abundance distr
 mods <- c('lseries', 'plnorm', 'tnegb')
 
 # loop over studies, fitting SAD models
-sad_stats <- mclapply(obsdat, 
+sad_stats <- mclapply(obs_dat, 
                       mc.cores = nthrd, 
                       FUN = function(x) {
     nsite <- nrow(x)
@@ -303,6 +309,7 @@ sad_stats$mod <- mods[sad_stats$mod]
 
 ```{r}
 #| label: fig-aic-sad
+#| dependson: sad-stats
 #| fig-width: 4
 #| fig-height: 3
 #| fig-cap: |
@@ -355,4 +362,109 @@ ggplot(sad_select, aes(xmin = abund_min, xmax = abund_max,
 ```
 
 
+## Studying networks simulated based on real abundance data
 
+Now we seek to compare the networks reconstructed from real data to those reconstructed from purely random data simulated by sampling SADs and SSADs without any true interaction/association between species. 
+
+First we compute network statistics for the real data
+
+```{r}
+#| label: obs-nets
+
+obs_nets <- mclapply(obs_dat, net_stats, mc.cores = nthrd) |> 
+    do.call(rbind, args = _) |> 
+    as.data.frame() 
+
+```
+
+```{r}
+#| label: fig-og
+#| eval: false
+
+ggplot(filter(obs_nets, !is.na(pos_rho) & !is.na(neg_rho)), 
+       aes(pos_wm_abund - neg_wm_abund)) +
+    geom_histogram(bins = 20, alpha = 0.5, color = "black") +
+    xlim(-0.33, 0.33)
+
+
+ggplot(filter(obs_nets, !is.na(pos_rho) & !is.na(neg_rho)), 
+       aes(pos_rho - neg_rho)) +
+    geom_histogram(bins = 20, alpha = 0.5, color = "black") +
+    xlim(c(-2, 2))
+
+ggplot(filter(obs_nets, !is.na(pos_rho) & !is.na(neg_rho))) +
+    geom_histogram(aes(pos_rho, y = -after_stat(count)), bins = 24, alpha = 0.5, color = "black") +
+    xlim(-1, 1)
+
+
+
+
+
+ggplot(filter(obs_nets, !is.na(pos_rho) & !is.na(neg_rho))) +
+    geom_histogram(aes(pos_rho), alpha = 0.5, color = "black", bins = 24) +
+    geom_histogram(aes(neg_rho, y = -after_stat(count)), alpha = 0.5, color = "black", bins = 24) +
+    ylab("foo")
+
+
+ggplot(filter(obs_nets, !is.na(pos_rho) & !is.na(neg_rho))) +
+    geom_histogram(aes(neg_rho), alpha = 0.5, color = "black", bins = 24) 
+
+
+ggplot(filter(obs_nets, !is.na(pos_rho) & !is.na(neg_rho))) +
+    geom_hist_comp(aes(x1 = pos_rho, x2 = neg_rho), color1 = "red",
+                   bins = 24, alpha = 0.5, mirror = TRUE) +
+    ylim(-75, 75)
+
+
+
+
+
+filter(obs_nets, !is.na(pos_rho) & !is.na(neg_rho)) |> 
+    select(study, pos_rho, neg_rho) |> 
+    tidyr::pivot_longer(!study) |> 
+ggplot(aes(value)) +
+    geom_mirror_histogram(aes(group = name, fill = name)) +
+    ylim(-60, 60)
+
+foo <- data.frame(x1 = rnorm(100), g = factor(rep(c(0, 1), each = 50)))
+plot(foo$g, foo$x1)
+
+ggplot(data.frame(x1 = rnorm(100), x2 = factor(rep(0:1, each = 50))), 
+       aes(x1)) +
+    geom_mirror_histogram(aes(group = x2))
+
+ggplot(nhefs_weights, aes(.fitted)) +
+  geom_mirror_histogram(
+    aes(group = qsmk),
+    bins = 50
+  )
+
+
+```
+
+```{r}
+#| label: sim-nets
+#| dependson: k-mod, sad-stats
+
+nb_nets_dat <- sim_nets(sad_stats, 
+                        mc_cores = nthrd, 
+                        k_fun = k_fun, 
+                        nsim = round(1.25 * sum(!is.na(obs_nets$pos_rho))))
+
+pois_nets_dat <- sim_nets(sad_stats, 
+                          mc_cores = nthrd, 
+                          ssad_type = "pois",
+                          nsim = round(1.25 * sum(!is.na(obs_nets$pos_rho))))
+
+```
+
+
+```{r}
+rbind(mutate(obs_nets, type = "real"), mutate(nb_nets_dat, type = "sim")) |> 
+    ggplot(aes(mean_degree)) +
+    geom_mirror_histogram(aes(group = type, fill = type)) 
+
+```
+
+
+## References
