@@ -3,3 +3,6 @@
 export(nb_fit)
 export(nb_mle)
 export(nb_zsq)
+export(net_stats)
+export(schoener)
+export(sim_nets)
