@@ -11,18 +11,12 @@
 #'     (default \code{"schoener"}). Note that the function must
 #'     calculate distances between columns, not rows
 #'
-#' @return an \code{ncol(x)} by \code{ncol(x)} matrix of species-species similarities
-#'
-#' @author Andy Rominger <ajrominger@@gmail.com>
+#' @return a named vector of network summary statistics
 #'
 #' @export
 
-net_stats(obsdat[[1]])
-
 net_stats <- function(x, alpha = 0.05, B = 999, dist_fun = "schoener") {
-    browser()
     dfun <- get(dist_fun)
-    dfun <- function(x) vegan::vegdist(t(x)) |> as.matrix()
 
     # metacommunity abundance
     metaX <- colSums(x)
@@ -32,14 +26,18 @@ net_stats <- function(x, alpha = 0.05, B = 999, dist_fun = "schoener") {
     obs_d <- obs_d[lower.tri(obs_d)]
 
     # null distances
-    null_mats <- stats::simulate(vegan::nullmodel(x, "r2dtable"), nsim = B)
+    null_mats <- stats::simulate(vegan::nullmodel(x, "r2dtable"),
+                                 nsim = B)
+
     null_d <- lapply(1:dim(null_mats)[3], function(i) {
         d <- dfun(null_mats[, , i])
         return(d[lower.tri(d)])
     })
 
     # add observed to nulls and make the whole thing
-    # a matrix where columns represent replicates
+    # a matrix where columns represent replicates,
+    # rows are cells from the lower tri of the
+    # distance matrix
     null_d <- cbind(obs_d, do.call(cbind, null_d))
 
     # probabilities that the observed species-species distances
@@ -51,42 +49,50 @@ net_stats <- function(x, alpha = 0.05, B = 999, dist_fun = "schoener") {
     epos <- as.integer(ppos <= alpha)
     eneg <- as.integer(pneg <= alpha)
 
-    # number of significantly positive and negative edges
-    npos <- sum(epos)
-    nneg <- sum(eneg)
-
     # edge list
-    elist <- cbind(t(combn(1:ncol(x), 2)), epos, eneg)
+    # `combn` provides lower tri indexes
+    elist <- cbind(t(combn(1:ncol(x), 2)),
+                   epos,
+                   eneg)
 
-    # igraph stats
+    # positive and negative association stats
+    pos_net_stats <- plus_minus_stats(elist[elist[, 3] == 1, 1:2,
+                                            drop = FALSE],
+                                      metaX)
+    neg_net_stats <- plus_minus_stats(elist[elist[, 4] == 1, 1:2,
+                                            drop = FALSE],
+                                      metaX)
+
+    # append "pos" and "neg" to stat names
+    names(pos_net_stats) <- paste("pos", names(pos_net_stats), sep = "_")
+    names(neg_net_stats) <- paste("neg", names(neg_net_stats), sep = "_")
+
+    # igraph-enabled stats on whole network
     all_net_stats <- g_stats(elist)
 
-    # centrality v. abundance corr and means
-    corMeanPos <- plus_minus_stats(elist[elist[, 3] == 1, 1:2, drop = FALSE],
-                                   metaX)
-    corMeanNeg <- plus_minus_stats(elist[elist[, 4] == 1, 1:2, drop = FALSE],
-                                   metaX)
-
-    # number of species in each network
-    vpos <- length(unique(as.vector(elist[elist[, 3] == 1, 1:2])))
-    vneg <- length(unique(as.vector(elist[elist[, 4] == 1, 1:2])))
-
-    return(list(all = c(v = ncol(x)),
-                pos = c(n = npos, corMeanPos),
-                neg = c(n = nneg, corMeanNeg)))
+    return(c(
+        all_net_stats,
+        pos_net_stats,
+        neg_net_stats
+    ))
 }
 
 
 # function to calculate statistics relevant to sub networks
 # of positive or negative interactions:
 #    - number of vertices
+#    - number of edges
 #    - corr between abundance and centrality
 #    - mean abundances, unweighted and weighted by centrality
 
-# and mean abundances, unweighted and weighted by centrality
 plus_minus_stats <- function(elist, abund) {
     if(nrow(elist) < 3) {
-        return(c(v = NA, rho = NA, p = NA, m = NA, wm = NA))
+        return(c(
+            num_v = length(unique(as.vector(elist))),
+            num_e = nrow(elist),
+            rho = NA,
+            m_abund = NA,
+            wm_abund = NA))
     } else {
         # centrality
         cen <- table(c(elist[, 1], elist[, 2]))
@@ -95,7 +101,7 @@ plus_minus_stats <- function(elist, abund) {
         x <- abund[as.integer(names(cen))]
 
         # correlation output
-        o <- cor(x, cen, method = 'spearman')
+        rho <- cor(x, cen, method = 'spearman')
 
         # relative abundance
         relx <- x / sum(abund)
@@ -104,12 +110,15 @@ plus_minus_stats <- function(elist, abund) {
             # number vertices
             num_v = length(cen),
 
+            # number edges
+            num_e = nrow(elist),
+
             # centrality-abund corr
-            rho = o,
+            rho = rho,
 
             # abundance means
-            m = mean(relx),
-            wm = weighted.mean(relx, cen)
+            m_abund = mean(relx),
+            wm_abund = weighted.mean(relx, cen)
         ))
     }
 }
