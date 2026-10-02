@@ -212,7 +212,7 @@ I therefore take two approaches to assessing the prevalence of the negative bino
 2. for all the data, whether the likelihood is undefined or defined, I evaluate the goodness of fit of the negative binomial model to the data (described in more detail below)
 
 ```{r}
-#| label: fig-aic-ssad
+#| label: fig-aic-ssad-mk
 #| dependson: ssad-stats
 #| fig-width: 4
 #| fig-height: 3
@@ -274,12 +274,12 @@ max_pois_AIC <- max(ssad_stats$delta_AIC[ssad_stats$delta_AIC >= 0])
 
 ```
 
-@fig-aic-ssad shows that the negative binomial model is preferred over the Poisson an overwhelmingly majority of the time. Only for rare species is the Poisson occasionally favored by AIC. Even in those cases where Poisson is favored the average $\Delta \text{AIC}$ separating Poisson and negative binomial is `r round(mean_pois_AIC, 2)` with a maximum of `r round(max_pois_AIC, 2)`, meaning even when the Poisson is favored, it is only marginally favored.
+@fig-aic-ssad-mk shows that the negative binomial model is preferred over the Poisson an overwhelmingly majority of the time. Only for rare species is the Poisson occasionally favored by AIC. Even in those cases where Poisson is favored the average $\Delta \text{AIC}$ separating Poisson and negative binomial is `r round(mean_pois_AIC, 2)` with a maximum of `r round(max_pois_AIC, 2)`, meaning even when the Poisson is favored, it is only marginally favored.
 
 <!-- WORK ON Z-SQ stuff -->
 
 
-In @fig-k-mod I also investigate the relationship of the clustering parameter $k$ with species relative abundance.  The purpose of this analysis is to be able to simulate random but realistic data.
+In @fig-k-mod-mk I also investigate the relationship of the clustering parameter $k$ with species relative abundance.  The purpose of this analysis is to be able to simulate random but realistic data.
 
 ```{r}
 #| label: k-mod
@@ -302,8 +302,14 @@ k_fun <- function(abund) {
 ```
 
 ```{r}
-#| label: fig-k-mod
-#| dependson: ssad-stats
+#| label: fig-k-mod-mk
+#| dependson: [ssad-stats, k-mod]
+#| fig-width: 4
+#| fig-height: 3.5
+#| fig-cap: |
+#|   Relationship between a species' relative abundance and its negative
+#|   binomial dispersion parameter $k$, with the fitted log-log linear
+#|   model.
 
 ggplot(filter(ssad_stats, is.finite(size)), 
        aes(abund / J, size)) +
@@ -311,7 +317,10 @@ ggplot(filter(ssad_stats, is.finite(size)),
     scale_x_log10() +
     scale_y_log10() +
     geom_smooth(method = "lm", se = FALSE, 
-                color = hsv(0.52, 1, 0.7))
+                color = hsv(0.52, 1, 0.7)) +
+    theme_cowplot() +
+    xlab("Relative abundance") +
+    ylab(expression(k))
 ```
 
 
