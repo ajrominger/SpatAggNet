@@ -1,0 +1,614 @@
+% Options for packages loaded elsewhere
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+%
+\documentclass[
+  letterpaper,
+  DIV=11,
+  numbers=noendperiod]{scrartcl}
+\usepackage{xcolor}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+% Make \paragraph and \subparagraph free-standing
+\makeatletter
+\ifx\paragraph\undefined\else
+  \let\oldparagraph\paragraph
+  \renewcommand{\paragraph}{
+    \@ifstar
+      \xxxParagraphStar
+      \xxxParagraphNoStar
+  }
+  \newcommand{\xxxParagraphStar}[1]{\oldparagraph*{#1}\mbox{}}
+  \newcommand{\xxxParagraphNoStar}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+  \let\oldsubparagraph\subparagraph
+  \renewcommand{\subparagraph}{
+    \@ifstar
+      \xxxSubParagraphStar
+      \xxxSubParagraphNoStar
+  }
+  \newcommand{\xxxSubParagraphStar}[1]{\oldsubparagraph*{#1}\mbox{}}
+  \newcommand{\xxxSubParagraphNoStar}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+\makeatother
+
+
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+% Set default figure placement to htbp
+\def\fps@figure{htbp}
+\makeatother
+
+
+% definitions for citeproc citations
+\NewDocumentCommand\citeproctext{}{}
+\NewDocumentCommand\citeproc{mm}{%
+  \begingroup\def\citeproctext{#2}\cite{#1}\endgroup}
+\makeatletter
+ % allow citations to break across lines
+ \let\@cite@ofmt\@firstofone
+ % avoid brackets around text for \cite:
+ \def\@biblabel#1{}
+ \def\@cite#1#2{{#1\if@tempswa , #2\fi}}
+\makeatother
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newlength{\csllabelwidth}
+\setlength{\csllabelwidth}{3em}
+\newenvironment{CSLReferences}[2] % #1 hanging-indent, #2 entry-spacing
+ {\begin{list}{}{%
+  \setlength{\itemindent}{0pt}
+  \setlength{\leftmargin}{0pt}
+  \setlength{\parsep}{0pt}
+  % turn on hanging indent if param 1 is 1
+  \ifodd #1
+   \setlength{\leftmargin}{\cslhangindent}
+   \setlength{\itemindent}{-1\cslhangindent}
+  \fi
+  % set entry spacing
+  \setlength{\itemsep}{#2\baselineskip}}}
+ {\end{list}}
+\usepackage{calc}
+\newcommand{\CSLBlock}[1]{\hfill\break\parbox[t]{\linewidth}{\strut\ignorespaces#1\strut}}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
+
+
+
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+
+
+ 
+
+
+\usepackage{xr}
+\externaldocument{ab_supp}
+\newcommand{\sfig}[1]{Supplementary Figure~\ref{#1}}
+\newcommand{\ssec}[1]{Supplementary Section~\ref{#1}}
+\usepackage{lineno}
+\KOMAoption{captions}{tableheading}
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\AtBeginDocument{%
+\ifdefined\contentsname
+  \renewcommand*\contentsname{Table of contents}
+\else
+  \newcommand\contentsname{Table of contents}
+\fi
+\ifdefined\listfigurename
+  \renewcommand*\listfigurename{List of Figures}
+\else
+  \newcommand\listfigurename{List of Figures}
+\fi
+\ifdefined\listtablename
+  \renewcommand*\listtablename{List of Tables}
+\else
+  \newcommand\listtablename{List of Tables}
+\fi
+\ifdefined\figurename
+  \renewcommand*\figurename{Figure}
+\else
+  \newcommand\figurename{Figure}
+\fi
+\ifdefined\tablename
+  \renewcommand*\tablename{Table}
+\else
+  \newcommand\tablename{Table}
+\fi
+}
+\@ifpackageloaded{float}{}{\usepackage{float}}
+\floatstyle{ruled}
+\@ifundefined{c@chapter}{\newfloat{codelisting}{h}{lop}}{\newfloat{codelisting}{h}{lop}[chapter]}
+\floatname{codelisting}{Listing}
+\newcommand*\listoflistings{\listof{codelisting}{List of Listings}}
+\makeatother
+\makeatletter
+\makeatother
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\@ifpackageloaded{subcaption}{}{\usepackage{subcaption}}
+\makeatother
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Spatial aggregation confounds null model-based inference of species association networks},
+  pdfauthor={Andrew J. Rominger},
+  colorlinks=true,
+  linkcolor={blue},
+  filecolor={Maroon},
+  citecolor={Blue},
+  urlcolor={Blue},
+  pdfcreator={LaTeX via pandoc}}
+
+
+\title{Spatial aggregation confounds null model-based inference of
+species association networks}
+\author{Andrew J. Rominger}
+\date{}
+\begin{document}
+\maketitle
+
+
+\linenumbers
+
+\subsection{Abstract}\label{abstract}
+
+\subsection{Introduction}\label{introduction}
+
+Species interactions are fundamental to the evolutionary origins of
+biodiversity and the maintenance of that diversity in ecological
+assemblages (Hutchinson 1961, Holt and Lawton 1994, Chesson 2000, Proulx
+et al. 2005, Bascompte and Jordano 2007, Levine and HilleRisLambers
+2009, Allesina and Tang 2012, Johnson and Bronstein 2019). Network
+theory has come to be a central paradigm in ecology and evolution (May
+1972, Williams and Martinez 2000, Dunne et al. 2002, Proulx et al. 2005,
+Bascompte and Jordano 2007), and so, not surprisingly, these
+interactions are often cast as ecological networks where species are
+nodes (or vertices) and network links (or edges) connect species that
+interact.
+
+Abundance or presence/absence data are among the most prevalent and
+accessible ecological data, and have consequentially been frequently
+leveraged (Morueta-Holme et al. 2016, Calatayud et al. 2019) in an
+attempt to infer species interactions (or more accurately associations),
+beginning at least in the work of Diamond (1975). The specific data used
+for constructing association networks are often site by species matrices
+where each cell in the matrix records the abundance (or
+presence/absence) of a given species at a given site (i.e.~sampling
+location). For simplicity I will refer to both abundance and
+presence/absence data as simply ``abundance data'' and focus on true
+abundance data with the assumed implication that methodological
+limitations in the case of true abundances will be even more confounding
+for presence/absence scenarios (Ulrich and Gotelli 2010).
+
+Two salient insights from decades of debate about using abundance data
+to infer ecological processes are: 1) interactions in the strict sense
+cannot be inferred, but \emph{species associations} might be recoverable
+and these \emph{associations} are assumed to map onto a combination of
+species-species and species-environment interactions (Morueta-Holme et
+al. 2016, Calatayud et al. 2019); and 2) robust null models are
+necessary to identify which patterns in the data are likely to arise by
+chance and which are likely to carry biological signal (Ulrich and
+Gotelli 2010).
+
+Null models seek to generate plausible data, and patterns in data, while
+stripping away the actual relationships between species in the data
+(Ulrich and Gotelli 2010). Most often a null model is achieved by
+repeatedly permuting the original data such that any real associations
+are removed because which species co-occur has been randomized by
+permutation (Ulrich and Gotelli 2010). The collection of all such
+permutations represents a null distribution. These permutation
+approaches also seek to preserve key aspects of the original data such
+as maintaining the observed abundances of each species and/or
+maintaining the observed total number of individuals at each site (Ladau
+2017). These constraints are imposed in an attempt to control the rate
+of incorrect inference of the presence or absence of network links
+(Ladau 2008, 2017). Other methods for inferring association networks do
+exist, especially model-based inference applied in microbial ecology
+(e.g. Zhou et al. 2010, Kurtz et al. 2015), but are less frequently
+employed in community ecology (but see, e.g., Harris 2016, Losapio et
+al. 2021).
+
+Here I raise a previously unreported technical issue with the approach
+of inferring association networks from abundance data using
+permutational null models. The issue arises from the near universal
+spatial aggregation of individuals within species (Legendre 1993, Condit
+et al. 2000, Lennon 2000, Dale and Fortin 2002, McGill and Collins 2003,
+Engen et al. 2008, Zillio and He 2010, Harte 2011, Connolly et al.
+2017). Using simulation experiments and analysis of real data (from
+Calatayud et al. 2019), I show that intra-specific spatial aggregation
+(ISSA) causes exceedingly high type I error rates in permutational null
+model approaches to inferring association networks, i.e., incorrectly
+detecting associations when there are none. ISSA in itself is not
+evidence of species association---it can arise from a large number of
+processes including simple demographic drift (Kendall 1949, Hubbell
+2001) in which species do not meaningfully interact with each other or
+shared environments.
+
+In the absence of ISSA, abundances of a species across sites should
+follow a Poisson distribution (Diggle 2003). Thus ISSA is often
+quantified as the deviation of observed data from a Poisson distribution
+(Diggle 2003). Conversely, the negative binomial distribution can model
+spatially aggregated intra-specific abundances across sites (Bliss and
+Fisher 1953, Taylor 1961, Engen et al. 2008, Connolly et al. 2017).
+Critically, the negative binomial arises very naturally from ecological
+processes as the distribution of population sizes in a
+birth-death-immigration model (Kendall 1949). If the abundance of a
+species at a site is determined by local birth and death with
+supplemental individuals arriving by immigration from a source pool,
+then the probability distribution of repeatedly sampled abundances will
+follow a negative binomial distribution (Kendall 1949). In this way,
+simple demographic drift (birth, death, and immigration that are purely
+stochastic) is expected to produce intra-specific abundances that are
+negative binomial-distributed and spatially aggregated. Thus ISSA is
+not, by itself, evidence of species association.
+
+The technical issue raised here is specific to the widely used family of
+methods that infer association networks by comparing an observed test
+statistic to a null distribution generated by Monte Carlo permutation of
+the site-by-species matrix. I do not test whether the same issue affects
+methods that do not rely on this style of null model, most notably joint
+species distribution models, which explicitly condition on measured or
+latent environmental covariates and site-level random effects (e.g. Zhou
+et al. 2010), or the compositional correlation methods common in
+microbial ecology (e.g. Kurtz et al. 2015). It is not obvious that the
+mechanism described here transfers directly to these other methods, and
+I do not want to imply, by omission, that it does. However, any effects
+of ISSA on joint species distribution modeling and compositional
+correlation methods should be assessed. Here I focus solely
+permutational null models because of their foundational status in the
+field (\textbf{cite?}) and their continued use in inferring association
+networks.
+
+\subsection{Methods}\label{methods}
+
+\subsubsection{Reproducibility and data}\label{reproducibility-and-data}
+
+A custom R package, \emph{SpatAggNet} accompanies this paper and can be
+used to reproduce all results. ssec\{sec-setup\} details how to access
+and install \emph{SpatAggNet}. All analysis scripts and data analyzed
+are available via the package.
+
+I use a compiled data set of site-by-species abundance matrices
+assembled by Calatayud et al. (2019). The data are included with the
+\emph{SpatAggNet} package as \texttt{abund\_mats} and comprise
+\texttt{\textbar{}r\ length(abund\_mats)} site-by-species matrices.
+These compiled data are ideal for investigating the impact of ISSA on
+association network inference because they were used by Calatayud et al.
+(2019) for the very purpose of network inference and also because they
+represent a spatially and taxonomically extensive collection of
+quality-controlled data.
+
+\subsubsection{Quantifying spatial
+aggregation}\label{quantifying-spatial-aggregation}
+
+The spatial species abundance distribution (SSAD) is the distribution of
+a single species' replicate abundances across sites. I fit both negative
+binomial and Poisson distributions to the SSADs of each species in each
+site-by-species matrix using maximum likelihood. The \texttt{nb\_fit()}
+function from \emph{SpatAggNet} fits both distributions to every species
+in each site-by-species matrix and returns, for each species from each
+matrix:
+
+\begin{itemize}
+\tightlist
+\item
+  the negative binomial dispersion parameter (\texttt{size}, i.e.~\(k\))
+  and mean (\texttt{mu})
+\item
+  the log-likelihoods of negative binomial and Poisson models
+\item
+  their AIC difference (\texttt{delta\_AIC}),
+\item
+  a \(\chi^2\)-distributed goodness-of-fit statistic for the negative
+  binomial {[}\texttt{zsq}; Etienne (2007){]}
+\item
+  the species' total abundance and occupancy.
+\end{itemize}
+
+\subsubsection{Analysis of empirical
+data}\label{analysis-of-empirical-data}
+
+\begin{itemize}
+\tightlist
+\item
+  purpose: show the issue and that nb is the reason
+\item
+  data from rareplusminus
+\item
+  get sad and ssad from those data
+
+  \begin{itemize}
+  \tightlist
+  \item
+    pois
+  \item
+    nb
+  \item
+    model selection of pois and nb
+  \end{itemize}
+\item
+  look at network stats for real data versus data simulated from sad and
+  ssad
+
+  \begin{itemize}
+  \tightlist
+  \item
+    pois: doesn't look like real data
+  \item
+    nb: looks close to real data
+  \end{itemize}
+\item
+  report on rareplusminus stuff
+\end{itemize}
+
+\subsubsection{Simulation experiment}\label{simulation-experiment}
+
+\begin{itemize}
+\tightlist
+\item
+  purpose: show the issue persists across different methods
+\item
+  start with data simulated from sad and ssad
+
+  \begin{itemize}
+  \tightlist
+  \item
+    only need to do nb
+  \end{itemize}
+\item
+  make networks based on diff perm methods and diff distance metrics
+\end{itemize}
+
+\subsubsection{Behavior of negative binomial random variables subjected
+to
+permutation}\label{behavior-of-negative-binomial-random-variables-subjected-to-permutation}
+
+\begin{itemize}
+\tightlist
+\item
+  show that k is distorted
+\end{itemize}
+
+\subsection{Results}\label{results}
+
+\subsubsection{Analysis of empirical
+data}\label{analysis-of-empirical-data-1}
+
+\subsubsection{Simulation experiment}\label{simulation-experiment-1}
+
+\subsection{Discussion}\label{discussion}
+
+\subsection*{References}\label{references}
+\addcontentsline{toc}{subsection}{References}
+
+\phantomsection\label{refs}
+\begin{CSLReferences}{1}{0}
+\bibitem[\citeproctext]{ref-allesina2012}
+Allesina, S., and S. Tang. 2012. Stability criteria for complex
+ecosystems. Nature 483:205--208.
+
+\bibitem[\citeproctext]{ref-bascompte2007}
+Bascompte, J., and P. Jordano. 2007. Plant-animal mutualistic networks:
+The architecture of biodiversity. Annu. Rev. Ecol. Evol. Syst.
+38:567--593.
+
+\bibitem[\citeproctext]{ref-bliss1953}
+Bliss, C. I., and R. A. Fisher. 1953. Fitting the negative binomial
+distribution to biological data. Biometrics 9:176--200.
+
+\bibitem[\citeproctext]{ref-calatayud2019}
+Calatayud, J., E. Andivia, A. Escudero, C. J. Melián, R.
+Bernardo-Madrid, M. Stoffel, C. Aponte, N. G. Medina, R. Molina-Venegas,
+X. Arnan, M. Rosvall, M. Neuman, J. A. Noriega, F. Alves-Martins, I.
+Draper, A. Luzuriaga, J. A. Ballesteros-Cánovas, C. Morales-Molino, P.
+Ferrandis, A. Herrero, L. Pataro, L. Juen, A. Cea, and J.
+Madrigal-González. 2019. Positive associations among rare species and
+their persistence in ecological assemblages. Nat Ecol Evol.
+
+\bibitem[\citeproctext]{ref-chesson2000}
+Chesson, P. 2000. Mechanisms of maintenance of species diversity. Annual
+review of Ecology and Systematics 31:343--366.
+
+\bibitem[\citeproctext]{ref-condit2000}
+Condit, R., P. S. Ashton, P. Baker, S. Bunyavejchewin, S. Gunatilleke,
+N. Gunatilleke, S. P. Hubbell, R. B. Foster, A. Itoh, J. V. LaFrankie,
+and others. 2000. Spatial patterns in the distribution of tropical tree
+species. Science 288:1414--1418.
+
+\bibitem[\citeproctext]{ref-connolly2017}
+Connolly, S. R., T. P. Hughes, and D. R. Bellwood. 2017. A unified model
+explains commonness and rarity on coral reefs. Ecology letters
+20:477--486.
+
+\bibitem[\citeproctext]{ref-dale2002}
+Dale, M. R., and M.-J. Fortin. 2002. Spatial autocorrelation and
+statistical tests in ecology. Ecoscience 9:162--167.
+
+\bibitem[\citeproctext]{ref-diamond1975}
+Diamond, J. M. 1975. Assembly of species communities. Ecology and
+evolution of communities:342--444.
+
+\bibitem[\citeproctext]{ref-diggle}
+Diggle, Peter. 2003. Statistical analysis of spatial point patterns. 2nd
+ed. Arnold, London.
+
+\bibitem[\citeproctext]{ref-dunne2002}
+Dunne, J. A., R. J. Williams, and N. D. Martinez. 2002. Network
+structure and biodiversity loss in food webs: Robustness increases with
+connectance. Ecology letters 5:558--567.
+
+\bibitem[\citeproctext]{ref-engen2008}
+Engen, S., R. Lande, and B.-E. Sæther. 2008. A general model for
+analyzing taylor's spatial scaling laws. Ecology 89:2612--2622.
+
+\bibitem[\citeproctext]{ref-etienne2007}
+Etienne, R. S. 2007. A neutral sampling formula for multiple samples and
+an {``exact''} test of neutrality. Ecology letters 10:608--618.
+
+\bibitem[\citeproctext]{ref-harris2016}
+Harris, D. J. 2016. Inferring species interactions from co-occurrence
+data with markov networks. Ecology 97:3308--3314.
+
+\bibitem[\citeproctext]{ref-harte2011}
+Harte, J. 2011. The maximum entropy theory of ecology. Oxford University
+Press.
+
+\bibitem[\citeproctext]{ref-holt1994}
+Holt, R. D., and J. Lawton. 1994. The ecological consequences of shared
+natural enemies. Annual review of Ecology and Systematics:495--520.
+
+\bibitem[\citeproctext]{ref-hubbell2001}
+Hubbell, S. P. 2001. The unified neutral theory of biodiversity and
+biogeography. Princeton University Press.
+
+\bibitem[\citeproctext]{ref-hutchinson1961}
+Hutchinson, G. E. 1961. The paradox of the plankton. The American
+Naturalist 95:137--145.
+
+\bibitem[\citeproctext]{ref-johnson2019}
+Johnson, C. A., and J. L. Bronstein. 2019. Coexistence and competitive
+exclusion in mutualism. Wiley Online Library.
+
+\bibitem[\citeproctext]{ref-kendall1949}
+Kendall, D. G. 1949. Stochastic processes and population growth. Journal
+of the Royal Statistical Society. Series B (Methodological) 11:230--282.
+
+\bibitem[\citeproctext]{ref-kurtz2015}
+Kurtz, Z. D., C. L. Müller, E. R. Miraldi, D. R. Littman, M. J. Blaser,
+and R. A. Bonneau. 2015. Sparse and compositionally robust inference of
+microbial ecological networks. PLoS computational biology 11:e1004226.
+
+\bibitem[\citeproctext]{ref-ladau2008}
+Ladau, J. 2008. Validation of null model tests using neyman--pearson
+hypothesis testing theory. Theoretical Ecology 1:241--248.
+
+\bibitem[\citeproctext]{ref-ladau2017}
+Ladau, J. 2017. The architecture and design of ecological null models.
+bioRxiv:195131.
+
+\bibitem[\citeproctext]{ref-legendre1993}
+Legendre, P. 1993. Spatial autocorrelation: Trouble or new paradigm?
+Ecology 74:1659--1673.
+
+\bibitem[\citeproctext]{ref-lennon2000}
+Lennon, J. J. 2000. Red-shifts and red herrings in geographical ecology.
+Ecography 23:101--113.
+
+\bibitem[\citeproctext]{ref-levine2009}
+Levine, J. M., and J. HilleRisLambers. 2009. The importance of niches
+for the maintenance of species diversity. Nature 461:254--257.
+
+\bibitem[\citeproctext]{ref-losapio2021}
+Losapio, G., C. Schöb, P. P. Staniczenko, F. Carrara, G. M. Palamara, C.
+M. De Moraes, M. C. Mescher, R. W. Brooker, B. J. Butterfield, R. M.
+Callaway, and others. 2021. Network motifs involving both competition
+and facilitation predict biodiversity in alpine plant communities.
+Proceedings of the National Academy of Sciences 118:e2005759118.
+
+\bibitem[\citeproctext]{ref-may1972}
+May, R. M. 1972. Will a large complex system be stable? Nature
+238:413--414.
+
+\bibitem[\citeproctext]{ref-mcgill2003}
+McGill, B., and C. Collins. 2003. A unified theory for macroecology
+based on spatial patterns of abundance. Evolutionary Ecology Research
+5:469--492.
+
+\bibitem[\citeproctext]{ref-morueta2016}
+Morueta-Holme, N., B. Blonder, B. Sandel, B. J. McGill, R. K. Peet, J.
+E. Ott, C. Violle, B. J. Enquist, P. M. Jørgensen, and J.-C. Svenning.
+2016. A network approach for inferring species associations from
+co-occurrence data. Ecography 39:1139--1150.
+
+\bibitem[\citeproctext]{ref-proulx2005}
+Proulx, S. R., D. E. Promislow, and P. C. Phillips. 2005. Network
+thinking in ecology and evolution. Trends in ecology \& evolution
+20:345--353.
+
+\bibitem[\citeproctext]{ref-taylor1961}
+Taylor, L. R. 1961. Aggregation, variance and the mean. Nature
+189:732--735.
+
+\bibitem[\citeproctext]{ref-ulrich2010}
+Ulrich, W., and N. J. Gotelli. 2010. Null model analysis of species
+associations using abundance data. Ecology 91:3384--3397.
+
+\bibitem[\citeproctext]{ref-williams2000}
+Williams, R. J., and N. D. Martinez. 2000. Simple rules yield complex
+food webs. Nature 404:180--183.
+
+\bibitem[\citeproctext]{ref-zhou2010}
+Zhou, J., Y. Deng, F. Luo, Z. He, Q. Tu, X. Zhi, J. Zhou, Y. Deng, F.
+Luo, Z. He, and others. 2010. Functional molecular ecological networks.
+mBio 1:e00169--10.
+
+\bibitem[\citeproctext]{ref-zillio2010}
+Zillio, T., and F. He. 2010. Modeling spatial aggregation of finite
+populations. Ecology 91:3698--3706.
+
+\end{CSLReferences}
+
+
+
+
+\end{document}

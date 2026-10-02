@@ -1,0 +1,748 @@
+% Options for packages loaded elsewhere
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+%
+\documentclass[
+  letterpaper,
+  DIV=11,
+  numbers=noendperiod]{scrartcl}
+\usepackage{xcolor}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{5}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+% Make \paragraph and \subparagraph free-standing
+\makeatletter
+\ifx\paragraph\undefined\else
+  \let\oldparagraph\paragraph
+  \renewcommand{\paragraph}{
+    \@ifstar
+      \xxxParagraphStar
+      \xxxParagraphNoStar
+  }
+  \newcommand{\xxxParagraphStar}[1]{\oldparagraph*{#1}\mbox{}}
+  \newcommand{\xxxParagraphNoStar}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+  \let\oldsubparagraph\subparagraph
+  \renewcommand{\subparagraph}{
+    \@ifstar
+      \xxxSubParagraphStar
+      \xxxSubParagraphNoStar
+  }
+  \newcommand{\xxxSubParagraphStar}[1]{\oldsubparagraph*{#1}\mbox{}}
+  \newcommand{\xxxSubParagraphNoStar}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+\makeatother
+
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{241,243,245}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.40,0.45,0.13}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\BuiltInTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\ExtensionTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.28,0.35,0.67}{#1}}
+\newcommand{\ImportTok}[1]{\textcolor[rgb]{0.00,0.46,0.62}{#1}}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.07,0.07,0.07}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
+
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+% Set default figure placement to htbp
+\def\fps@figure{htbp}
+\makeatother
+
+
+% definitions for citeproc citations
+\NewDocumentCommand\citeproctext{}{}
+\NewDocumentCommand\citeproc{mm}{%
+  \begingroup\def\citeproctext{#2}\cite{#1}\endgroup}
+\makeatletter
+ % allow citations to break across lines
+ \let\@cite@ofmt\@firstofone
+ % avoid brackets around text for \cite:
+ \def\@biblabel#1{}
+ \def\@cite#1#2{{#1\if@tempswa , #2\fi}}
+\makeatother
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newlength{\csllabelwidth}
+\setlength{\csllabelwidth}{3em}
+\newenvironment{CSLReferences}[2] % #1 hanging-indent, #2 entry-spacing
+ {\begin{list}{}{%
+  \setlength{\itemindent}{0pt}
+  \setlength{\leftmargin}{0pt}
+  \setlength{\parsep}{0pt}
+  % turn on hanging indent if param 1 is 1
+  \ifodd #1
+   \setlength{\leftmargin}{\cslhangindent}
+   \setlength{\itemindent}{-1\cslhangindent}
+  \fi
+  % set entry spacing
+  \setlength{\itemsep}{#2\baselineskip}}}
+ {\end{list}}
+\usepackage{calc}
+\newcommand{\CSLBlock}[1]{\hfill\break\parbox[t]{\linewidth}{\strut\ignorespaces#1\strut}}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
+
+
+
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+
+
+ 
+
+
+\renewcommand{\thefigure}{S\arabic{figure}}
+\renewcommand{\thesection}{S\arabic{section}}
+\KOMAoption{captions}{tableheading}
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\AtBeginDocument{%
+\ifdefined\contentsname
+  \renewcommand*\contentsname{Table of contents}
+\else
+  \newcommand\contentsname{Table of contents}
+\fi
+\ifdefined\listfigurename
+  \renewcommand*\listfigurename{List of Figures}
+\else
+  \newcommand\listfigurename{List of Figures}
+\fi
+\ifdefined\listtablename
+  \renewcommand*\listtablename{List of Tables}
+\else
+  \newcommand\listtablename{List of Tables}
+\fi
+\ifdefined\figurename
+  \renewcommand*\figurename{Supp. Figure}
+\else
+  \newcommand\figurename{Supp. Figure}
+\fi
+\ifdefined\tablename
+  \renewcommand*\tablename{Table}
+\else
+  \newcommand\tablename{Table}
+\fi
+}
+\@ifpackageloaded{float}{}{\usepackage{float}}
+\floatstyle{ruled}
+\@ifundefined{c@chapter}{\newfloat{codelisting}{h}{lop}}{\newfloat{codelisting}{h}{lop}[chapter]}
+\floatname{codelisting}{Listing}
+\newcommand*\listoflistings{\listof{codelisting}{List of Listings}}
+\makeatother
+\makeatletter
+\makeatother
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\@ifpackageloaded{subcaption}{}{\usepackage{subcaption}}
+\makeatother
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Supplament to ``Spatial aggregation confounds null model-based inference of species association networks''},
+  pdfauthor={Andrew J. Rominger},
+  colorlinks=true,
+  linkcolor={blue},
+  filecolor={Maroon},
+  citecolor={Blue},
+  urlcolor={Blue},
+  pdfcreator={LaTeX via pandoc}}
+
+
+\title{Supplament to ``Spatial aggregation confounds null model-based
+inference of species association networks''}
+\author{Andrew J. Rominger}
+\date{}
+\begin{document}
+\maketitle
+
+
+\section{Reproducibility}\label{reproducibility}
+
+The results of this study can be fully reproduced by installing the
+package \emph{SpatAggNet} written in R (R Core Team 2018) and available
+on GitHub. \emph{SpatAggNet} has a dependency on the custom pacakge
+\emph{pika} also available from GitHub. \emph{pika} must be installed
+first for \emph{SpatAggNet} to install.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{pika\_pack }\OtherTok{\textless{}{-}} \FunctionTok{require}\NormalTok{(pika)}
+\ControlFlowTok{if}\NormalTok{(}\SpecialCharTok{!}\NormalTok{pika\_pack) }\FunctionTok{install\_github}\NormalTok{(}\StringTok{"ajrominger/pika"}\NormalTok{)}
+
+\NormalTok{this\_pack }\OtherTok{\textless{}{-}} \FunctionTok{require}\NormalTok{(SpatAggNet)}
+\ControlFlowTok{if}\NormalTok{(}\SpecialCharTok{!}\NormalTok{this\_pack) }\FunctionTok{install\_github}\NormalTok{(}\StringTok{"ajrominger/SpatAggNet"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+The \emph{SpatAggNet} package includes documented (Wickham \emph{et al.}
+2018) and unit-tested (Wickham 2011) functions to carry out all
+analyses.
+
+The following R computing environment is used for all simulations and
+analyses:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(SpatAggNet)}
+\FunctionTok{library}\NormalTok{(pika)}
+\FunctionTok{library}\NormalTok{(dplyr)}
+\FunctionTok{library}\NormalTok{(tidyr)}
+\FunctionTok{library}\NormalTok{(ggplot2)}
+\FunctionTok{library}\NormalTok{(cowplot)}
+\FunctionTok{library}\NormalTok{(knitr)}
+\FunctionTok{library}\NormalTok{(parallel)}
+
+\CommentTok{\# threading defaults}
+\NormalTok{nthrd }\OtherTok{\textless{}{-}} \FunctionTok{detectCores}\NormalTok{()}
+\NormalTok{nthrd }\OtherTok{\textless{}{-}} \FunctionTok{ifelse}\NormalTok{(}\FunctionTok{round}\NormalTok{(nthrd }\SpecialCharTok{*} \FloatTok{0.8}\NormalTok{) }\SpecialCharTok{\textgreater{}=}\NormalTok{ nthrd }\SpecialCharTok{{-}} \DecValTok{1} \SpecialCharTok{\&}\NormalTok{ nthrd }\SpecialCharTok{\textgreater{}} \DecValTok{1}\NormalTok{, }
+\NormalTok{                nthrd }\SpecialCharTok{{-}} \DecValTok{1}\NormalTok{, }
+                \FunctionTok{round}\NormalTok{(nthrd }\SpecialCharTok{*} \FloatTok{0.8}\NormalTok{))}
+
+
+\FunctionTok{sessionInfo}\NormalTok{() }\SpecialCharTok{|\textgreater{}} 
+    \FunctionTok{print}\NormalTok{(}\AttributeTok{locale =} \ConstantTok{FALSE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+R version 4.5.2 (2025-10-31)
+Platform: aarch64-apple-darwin20
+Running under: macOS Sequoia 15.0.1
+
+Matrix products: default
+BLAS:   /System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/libBLAS.dylib 
+LAPACK: /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.1
+
+attached base packages:
+[1] parallel  stats     graphics  grDevices utils     datasets  methods  
+[8] base     
+
+other attached packages:
+[1] knitr_1.50         cowplot_1.2.0.9000 ggplot2_4.0.1      tidyr_1.3.1       
+[5] dplyr_1.1.4        SpatAggNet_0.1.0   pika_1.0          
+
+loaded via a namespace (and not attached):
+ [1] vctrs_0.6.5        cli_3.6.5          rlang_1.1.6        xfun_0.52         
+ [5] purrr_1.1.0        generics_0.1.4     S7_0.2.1           jsonlite_2.0.0    
+ [9] glue_1.8.0         htmltools_0.5.8.1  scales_1.4.0       rmarkdown_2.29    
+[13] grid_4.5.2         evaluate_1.0.4     tibble_3.3.0       fastmap_1.2.0     
+[17] yaml_2.3.10        lifecycle_1.0.4    compiler_4.5.2     RColorBrewer_1.1-3
+[21] pkgconfig_2.0.3    rstudioapi_0.17.1  farver_2.1.2       digest_0.6.39     
+[25] R6_2.6.1           tidyselect_1.2.1   pillar_1.11.0      magrittr_2.0.4    
+[29] withr_3.0.2        gtable_0.3.6       tools_4.5.2       
+\end{verbatim}
+
+The quarto (Allaire \emph{et al.} 2025) document used to generate this
+supplement can be found with the R command
+\texttt{system.file("ms/SpatAggNet\_supp.qmd",\ package\ =\ "SpatAggNet")}.
+
+\section{Computing spatial abundance
+distributions}\label{computing-spatial-abundance-distributions}
+
+The data included with the \emph{SpatAggNet} package are from Calatayud
+\emph{et al.} (2019) and take the form of a list of site by species
+matrices.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# load list of site by species matrices provided in SpatAggNet}
+\FunctionTok{data}\NormalTok{(}\StringTok{"abund\_mats"}\NormalTok{)}
+
+\CommentTok{\# remove decimals and empty rows/columns}
+\NormalTok{obs\_dat }\OtherTok{\textless{}{-}} \FunctionTok{lapply}\NormalTok{(abund\_mats, }\ControlFlowTok{function}\NormalTok{(x) \{}
+\NormalTok{    x }\OtherTok{\textless{}{-}} \FunctionTok{ceiling}\NormalTok{(x)}
+\NormalTok{    x }\OtherTok{\textless{}{-}}\NormalTok{ x[}\FunctionTok{rowSums}\NormalTok{(x) }\SpecialCharTok{\textgreater{}} \DecValTok{0}\NormalTok{, }\FunctionTok{colSums}\NormalTok{(x) }\SpecialCharTok{\textgreater{}} \DecValTok{0}\NormalTok{]}
+    
+    \FunctionTok{return}\NormalTok{(x)}
+\NormalTok{\})}
+\end{Highlighting}
+\end{Shaded}
+
+In order to investigate the affect of intra-specific spatial aggregation
+(ISSA) on inferred networks, we first calculate the parameters of the
+species abundance distribution (SAD) for each data set and the
+intra-specific spatial abundance distributions (SSAD) for each species
+in each data set. The \texttt{nb\_fit} function from \emph{SpatAggNet}
+computes SSAD parameters as well as summary statistics including
+goodness of fit.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# SSAD statistics for each species in each data set}
+\NormalTok{ssad\_stats }\OtherTok{\textless{}{-}} \FunctionTok{mclapply}\NormalTok{(obs\_dat, }
+                       \AttributeTok{mc.cores =}\NormalTok{ nthrd, }
+                       \AttributeTok{FUN =} \ControlFlowTok{function}\NormalTok{(x) \{}
+\NormalTok{                           nb\_info }\OtherTok{\textless{}{-}} \FunctionTok{nb\_fit}\NormalTok{(x)}
+                           \FunctionTok{cbind}\NormalTok{(}\AttributeTok{nsite =} \FunctionTok{nrow}\NormalTok{(x), }\AttributeTok{nspp =} \FunctionTok{ncol}\NormalTok{(x), }
+                                 \AttributeTok{J =} \FunctionTok{sum}\NormalTok{(x), nb\_info)}
+\NormalTok{                       \}) }\SpecialCharTok{|\textgreater{}} 
+    \FunctionTok{bind\_rows}\NormalTok{(}\AttributeTok{.id =} \StringTok{"study"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{Prevelance of the negative binomial
+SSAD}\label{prevelance-of-the-negative-binomial-ssad}
+
+We would like to know how prevalent the negative binomial SSAD is in the
+data studied here. This is complicated by the fact that the negative
+binomial likelihood function does not have a finite maximum when the
+mean of the data is greater than or equal to the variance. In the data
+studied here, we see the greatest proportion of cases where
+\(\mathbb{E}[x] \geq \mathbb{Var}[x]\) for rare species and when the
+number of spatial replicates is small Supp. Figure~\ref{fig-inf-k}.
+Unstable estimation for rare species with small sample size is to be
+expected, but combined with the fact that most species are rare, it is a
+challenge to assess the prevalence of the negative binomial SSAD.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{abund\_nsite }\OtherTok{\textless{}{-}} \FunctionTok{expand.grid}\NormalTok{(}\AttributeTok{abund =} \DecValTok{1}\SpecialCharTok{:}\DecValTok{40}\NormalTok{, }\AttributeTok{nsite =} \DecValTok{10}\SpecialCharTok{:}\DecValTok{90}\NormalTok{)}
+
+\NormalTok{bad\_k }\OtherTok{\textless{}{-}} \FunctionTok{sapply}\NormalTok{(}\DecValTok{1}\SpecialCharTok{:}\FunctionTok{nrow}\NormalTok{(abund\_nsite), }\ControlFlowTok{function}\NormalTok{(i) \{}
+\NormalTok{    j }\OtherTok{\textless{}{-}}\NormalTok{ ssad\_stats}\SpecialCharTok{$}\NormalTok{abund }\SpecialCharTok{\textgreater{}}\NormalTok{ abund\_nsite}\SpecialCharTok{$}\NormalTok{abund[i] }\SpecialCharTok{\&}
+\NormalTok{        ssad\_stats}\SpecialCharTok{$}\NormalTok{nsite }\SpecialCharTok{\textgreater{}}\NormalTok{ abund\_nsite}\SpecialCharTok{$}\NormalTok{nsite[i]}
+    
+    \FunctionTok{mean}\NormalTok{(}\SpecialCharTok{!}\FunctionTok{is.finite}\NormalTok{(ssad\_stats}\SpecialCharTok{$}\NormalTok{size[j]))}
+\NormalTok{\})}
+
+\NormalTok{prop\_finite\_k }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(abund\_nsite, bad\_k)}
+
+
+\FunctionTok{ggplot}\NormalTok{(prop\_finite\_k, }\FunctionTok{aes}\NormalTok{(abund, nsite, }\AttributeTok{fill =}\NormalTok{ bad\_k)) }\SpecialCharTok{+}
+    \FunctionTok{geom\_tile}\NormalTok{() }\SpecialCharTok{+}
+    \FunctionTok{scale\_fill\_viridis\_c}\NormalTok{(}\AttributeTok{name =} \StringTok{"Cumulative}\SpecialCharTok{\textbackslash{}n}\StringTok{prob. of}\SpecialCharTok{\textbackslash{}n}\StringTok{undefined}\SpecialCharTok{\textbackslash{}n}\StringTok{log like"}\NormalTok{) }\SpecialCharTok{+}
+    \FunctionTok{theme\_cowplot}\NormalTok{() }\SpecialCharTok{+}
+    \FunctionTok{scale\_y\_continuous}\NormalTok{(}\AttributeTok{breaks =} \FunctionTok{c}\NormalTok{(}\DecValTok{10}\NormalTok{, }\DecValTok{30}\NormalTok{, }\DecValTok{50}\NormalTok{, }\DecValTok{70}\NormalTok{, }\DecValTok{90}\NormalTok{)) }\SpecialCharTok{+}
+    \FunctionTok{xlab}\NormalTok{(}\StringTok{"Total species abundance"}\NormalTok{) }\SpecialCharTok{+}
+    \FunctionTok{ylab}\NormalTok{(}\StringTok{"Number of sites in study"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{SpatAggNet_supp_files/figure-pdf/fig-inf-k-1.pdf}}
+
+}
+
+\caption{\label{fig-inf-k}Cumulative probability of encountering a
+species with an undefined log likelihood function. Probability
+accumulates from right to left and top to bottom. This highlights the
+difficulty of fitting a negative binomial distribution to rare species
+in data sets with few sites.}
+
+\end{figure}%
+
+I therefore take two approaches to assessing the prevalence of the
+negative binomial SSAD:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  where the likelihood is defined, I compare the support for a negative
+  binomial versus a Poisson model with AIC
+\item
+  for all the data, whether the likelihood is undefined or defined, I
+  evaluate the goodness of fit of the negative binomial model to the
+  data (described in more detail below)
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{mod\_select }\OtherTok{\textless{}{-}} \FunctionTok{filter}\NormalTok{(ssad\_stats, }
+                     \CommentTok{\# only cases with defined likelihood}
+                     \FunctionTok{is.finite}\NormalTok{(size)) }\SpecialCharTok{|\textgreater{}} 
+    \CommentTok{\# bin by abundance}
+    \FunctionTok{mutate}\NormalTok{(}\AttributeTok{abund\_bin =} \FunctionTok{cut}\NormalTok{(abund, }\FunctionTok{c}\NormalTok{(}\FunctionTok{seq}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{800}\NormalTok{, }\AttributeTok{length.out =} \DecValTok{9}\NormalTok{), }
+                                    \FunctionTok{exp}\NormalTok{(}\FunctionTok{seq}\NormalTok{(}\FunctionTok{log}\NormalTok{(}\DecValTok{1000}\NormalTok{), }\FunctionTok{log}\NormalTok{(}\FunctionTok{max}\NormalTok{(abund)), }
+                                        \AttributeTok{length.out =} \DecValTok{4}\NormalTok{))))) }\SpecialCharTok{|\textgreater{}} 
+    \FunctionTok{group\_by}\NormalTok{(abund\_bin) }\SpecialCharTok{|\textgreater{}} 
+    \CommentTok{\# calculations to plot bars with nb on top of pois}
+    \FunctionTok{summarize}\NormalTok{(}\AttributeTok{pois\_max =} \FunctionTok{mean}\NormalTok{(delta\_AIC }\SpecialCharTok{\textgreater{}=} \DecValTok{0}\NormalTok{),}
+              \AttributeTok{nb\_max =} \FunctionTok{mean}\NormalTok{(delta\_AIC }\SpecialCharTok{\textless{}} \DecValTok{0}\NormalTok{) }\SpecialCharTok{+}\NormalTok{ pois\_max, }
+              \AttributeTok{pois\_min =} \DecValTok{0}\NormalTok{, }
+              \AttributeTok{nb\_min =}\NormalTok{ pois\_max) }\SpecialCharTok{|\textgreater{}} 
+    \FunctionTok{ungroup}\NormalTok{() }\SpecialCharTok{|\textgreater{}} 
+    \CommentTok{\# resolve upper and lower bounds of rects from}
+    \CommentTok{\# output of \textasciigrave{}cut\textasciigrave{}}
+    \FunctionTok{pivot\_longer}\NormalTok{(}\AttributeTok{cols =} \SpecialCharTok{{-}}\NormalTok{abund\_bin,}
+                 \AttributeTok{names\_to =} \FunctionTok{c}\NormalTok{(}\StringTok{"model"}\NormalTok{, }\StringTok{".value"}\NormalTok{),}
+                 \AttributeTok{names\_sep =} \StringTok{"\_"}\NormalTok{) }\SpecialCharTok{|\textgreater{}} 
+    \FunctionTok{mutate}\NormalTok{(}\AttributeTok{abund\_max =} \FunctionTok{gsub}\NormalTok{(}\StringTok{".*,|}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{]"}\NormalTok{, }\StringTok{""}\NormalTok{, abund\_bin) }\SpecialCharTok{|\textgreater{}}
+               \FunctionTok{as.numeric}\NormalTok{(),}
+           \AttributeTok{abund\_min =} \FunctionTok{gsub}\NormalTok{(}\StringTok{"}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{(|,.*"}\NormalTok{, }\StringTok{""}\NormalTok{, abund\_bin) }\SpecialCharTok{|\textgreater{}}
+               \FunctionTok{as.numeric}\NormalTok{())}
+
+\FunctionTok{ggplot}\NormalTok{(mod\_select, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{xmin =}\NormalTok{ abund\_min, }\AttributeTok{xmax =}\NormalTok{ abund\_max, }
+                       \AttributeTok{ymin =}\NormalTok{ min, }\AttributeTok{ymax =}\NormalTok{ max, }\AttributeTok{fill =}\NormalTok{ model)) }\SpecialCharTok{+}
+    \FunctionTok{geom\_rect}\NormalTok{(}\AttributeTok{color =} \StringTok{"black"}\NormalTok{, }\AttributeTok{linewidth =} \FloatTok{0.5}\NormalTok{) }\SpecialCharTok{+}
+    \FunctionTok{scale\_fill\_discrete}\NormalTok{(}\AttributeTok{name =} \StringTok{"Model favored by AIC"}\NormalTok{, }
+                        \AttributeTok{labels =} \FunctionTok{c}\NormalTok{(}\StringTok{"Negative binomial"}\NormalTok{, }\StringTok{"Poisson"}\NormalTok{),}
+                        \AttributeTok{palette =} \FunctionTok{hsv}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\FloatTok{0.52}\NormalTok{, }\FloatTok{0.08}\NormalTok{), }\FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\FloatTok{0.8}\NormalTok{), }\FunctionTok{c}\NormalTok{(}\FloatTok{0.7}\NormalTok{, }\FloatTok{0.9}\NormalTok{))) }\SpecialCharTok{+}
+    \FunctionTok{xlab}\NormalTok{(}\StringTok{"Total abundance"}\NormalTok{) }\SpecialCharTok{+}
+    \FunctionTok{ylab}\NormalTok{(}\StringTok{"Proportion"}\NormalTok{) }\SpecialCharTok{+}
+    \FunctionTok{theme\_cowplot}\NormalTok{() }\SpecialCharTok{+}
+    \FunctionTok{theme}\NormalTok{(}\AttributeTok{legend.position =} \FunctionTok{c}\NormalTok{(}\FloatTok{0.92}\NormalTok{, }\FloatTok{0.92}\NormalTok{),}
+      \AttributeTok{legend.justification =} \FunctionTok{c}\NormalTok{(}\StringTok{"right"}\NormalTok{, }\StringTok{"top"}\NormalTok{), }
+      \AttributeTok{legend.background =} \FunctionTok{element\_rect}\NormalTok{(}\AttributeTok{fill =} \StringTok{"white"}\NormalTok{, }\AttributeTok{color =} \StringTok{"black"}\NormalTok{), }
+      \AttributeTok{legend.margin =} \FunctionTok{margin}\NormalTok{(}\AttributeTok{t =} \DecValTok{2}\NormalTok{, }\AttributeTok{r =} \DecValTok{2}\NormalTok{, }\AttributeTok{b =} \DecValTok{2}\NormalTok{, }\AttributeTok{l =} \DecValTok{2}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{SpatAggNet_supp_files/figure-pdf/fig-aic-ssad-1.pdf}}
+
+}
+
+\caption{\label{fig-aic-ssad}Proportion of species favoring a negative
+binomial or Poisson distribution. Model selection is shown across bins
+of total species abundance. Bins are 100 wide from 0 to 800, then
+increase in width exponentially because fewer species have very large
+abundances.}
+
+\end{figure}%
+
+Supp. Figure~\ref{fig-aic-ssad} shows that the negative binomial model
+is preferred over the Poisson an overwhelmingly majority of the time.
+Only for rare species is the Poisson occasionally favored by AIC. Even
+in those cases where Poisson is favored the average
+\(\Delta \text{AIC}\) separating Poisson and negative binomial is 1.92
+with a maximum of 2.07, meaning even when the Poisson is favored, it is
+only marginally favored.
+
+In Supp. Figure~\ref{fig-k-mod} I also investigate the relationship of
+the clustering parameter \(k\) with species relative abundance. The
+purpose of this analysis is to be able to simulate random but realistic
+data.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{k\_mod }\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(logk }\SpecialCharTok{\textasciitilde{}}\NormalTok{ loga, }
+            \AttributeTok{data =} \FunctionTok{filter}\NormalTok{(ssad\_stats, }\FunctionTok{is.finite}\NormalTok{(size)) }\SpecialCharTok{|\textgreater{}} 
+                \FunctionTok{mutate}\NormalTok{(}\AttributeTok{loga =} \FunctionTok{log}\NormalTok{(abund }\SpecialCharTok{/}\NormalTok{ J), }
+                       \AttributeTok{logk =} \FunctionTok{log}\NormalTok{(size)))}
+
+\CommentTok{\# a function to randomly draw a k value given abundance}
+\NormalTok{k\_fun }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(abund) \{}
+\NormalTok{    J }\OtherTok{\textless{}{-}} \FunctionTok{sum}\NormalTok{(abund)}
+    
+    \FunctionTok{exp}\NormalTok{(}\FunctionTok{predict}\NormalTok{(k\_mod, }\AttributeTok{newdata =} \FunctionTok{data.frame}\NormalTok{(}\AttributeTok{loga =} \FunctionTok{log}\NormalTok{(abund }\SpecialCharTok{/}\NormalTok{ J))) }\SpecialCharTok{+}
+            \FunctionTok{rnorm}\NormalTok{(}\FunctionTok{length}\NormalTok{(abund), }\AttributeTok{sd =} \FunctionTok{summary}\NormalTok{(k\_mod)}\SpecialCharTok{$}\NormalTok{sigma))}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(}\FunctionTok{filter}\NormalTok{(ssad\_stats, }\FunctionTok{is.finite}\NormalTok{(size)), }
+       \FunctionTok{aes}\NormalTok{(abund }\SpecialCharTok{/}\NormalTok{ J, size)) }\SpecialCharTok{+}
+    \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{alpha =} \FloatTok{0.25}\NormalTok{) }\SpecialCharTok{+}
+    \FunctionTok{scale\_x\_log10}\NormalTok{() }\SpecialCharTok{+}
+    \FunctionTok{scale\_y\_log10}\NormalTok{() }\SpecialCharTok{+}
+    \FunctionTok{geom\_smooth}\NormalTok{(}\AttributeTok{method =} \StringTok{"lm"}\NormalTok{, }\AttributeTok{se =} \ConstantTok{FALSE}\NormalTok{, }
+                \AttributeTok{color =} \FunctionTok{hsv}\NormalTok{(}\FloatTok{0.52}\NormalTok{, }\DecValTok{1}\NormalTok{, }\FloatTok{0.7}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{SpatAggNet_supp_files/figure-pdf/fig-k-mod-1.pdf}}
+
+}
+
+\caption{\label{fig-k-mod}}
+
+\end{figure}%
+
+\section{Computing species abundance
+distributions}\label{computing-species-abundance-distributions}
+
+The package \emph{pika} provides functions for fitting common species
+abundance distribution models. I use the \texttt{fitSAD} from
+\emph{pika} to preform model selection on three standard SAD forms---the
+log-series, Poisson log-normal, and zero-truncated negative
+binomial---and record the best fit model and its parameter(s) for each
+data set.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# models to consider}
+\NormalTok{mods }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{\textquotesingle{}lseries\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}plnorm\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}tnegb\textquotesingle{}}\NormalTok{)}
+
+\CommentTok{\# loop over studies, fitting SAD models}
+\NormalTok{sad\_stats }\OtherTok{\textless{}{-}} \FunctionTok{mclapply}\NormalTok{(obs\_dat, }
+                      \AttributeTok{mc.cores =}\NormalTok{ nthrd, }
+                      \AttributeTok{FUN =} \ControlFlowTok{function}\NormalTok{(x) \{}
+\NormalTok{    nsite }\OtherTok{\textless{}{-}} \FunctionTok{nrow}\NormalTok{(x)}
+\NormalTok{    x }\OtherTok{\textless{}{-}} \FunctionTok{colSums}\NormalTok{(x)}
+\NormalTok{    s }\OtherTok{\textless{}{-}} \FunctionTok{fitSAD}\NormalTok{(x, mods)}
+    
+    \CommentTok{\# which model is best supported}
+\NormalTok{    i }\OtherTok{\textless{}{-}} \FunctionTok{which.min}\NormalTok{(}\FunctionTok{sapply}\NormalTok{(s, AIC))}
+    
+    \CommentTok{\# mle of params of bets model}
+\NormalTok{    o }\OtherTok{\textless{}{-}}\NormalTok{ s[[i]]}\SpecialCharTok{$}\NormalTok{MLE}
+    
+    \CommentTok{\# if lseries is best, only has 1 param}
+    \ControlFlowTok{if}\NormalTok{(i }\SpecialCharTok{==} \DecValTok{1}\NormalTok{) o }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(o, }\ConstantTok{NA}\NormalTok{)}
+    
+\NormalTok{    o }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(i, o, }\FunctionTok{sum}\NormalTok{(x), }\FunctionTok{length}\NormalTok{(x), nsite)}
+    \FunctionTok{names}\NormalTok{(o) }\OtherTok{\textless{}{-}} \ConstantTok{NULL}
+    
+    \FunctionTok{return}\NormalTok{(o)}
+\NormalTok{\}) }\SpecialCharTok{|\textgreater{}} 
+    \FunctionTok{do.call}\NormalTok{(rbind, }\AttributeTok{args =}\NormalTok{ \_) }\SpecialCharTok{|\textgreater{}} 
+    \FunctionTok{as.data.frame}\NormalTok{() }
+
+\NormalTok{sad\_stats }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(}\AttributeTok{study =} \FunctionTok{rownames}\NormalTok{(sad\_stats), sad\_stats)}
+\FunctionTok{names}\NormalTok{(sad\_stats)[}\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{] }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{\textquotesingle{}mod\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}par1\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}par2\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}J\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}nspp\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}nsite\textquotesingle{}}\NormalTok{)}
+\FunctionTok{rownames}\NormalTok{(sad\_stats) }\OtherTok{\textless{}{-}} \ConstantTok{NULL}
+\NormalTok{sad\_stats}\SpecialCharTok{$}\NormalTok{mod }\OtherTok{\textless{}{-}}\NormalTok{ mods[sad\_stats}\SpecialCharTok{$}\NormalTok{mod]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{sad\_select }\OtherTok{\textless{}{-}} \FunctionTok{filter}\NormalTok{(sad\_stats) }\SpecialCharTok{|\textgreater{}} 
+    \FunctionTok{mutate}\NormalTok{(}\AttributeTok{abund\_bin =} \FunctionTok{cut}\NormalTok{(J, }\FunctionTok{c}\NormalTok{(}\FunctionTok{seq}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{1400}\NormalTok{, }\AttributeTok{length.out =} \DecValTok{9}\NormalTok{), }
+                                \FunctionTok{exp}\NormalTok{(}\FunctionTok{seq}\NormalTok{(}\FunctionTok{log}\NormalTok{(}\DecValTok{2000}\NormalTok{), }\FunctionTok{log}\NormalTok{(}\FunctionTok{max}\NormalTok{(J)), }
+                                        \AttributeTok{length.out =} \DecValTok{4}\NormalTok{))))) }\SpecialCharTok{|\textgreater{}} 
+    \FunctionTok{group\_by}\NormalTok{(abund\_bin) }\SpecialCharTok{|\textgreater{}} 
+    \FunctionTok{summarize}\NormalTok{(}\AttributeTok{lseries\_max =} \FunctionTok{mean}\NormalTok{(mod }\SpecialCharTok{==} \StringTok{"lseries"}\NormalTok{),}
+              \AttributeTok{plnorm\_max =} \FunctionTok{mean}\NormalTok{(mod }\SpecialCharTok{==} \StringTok{"plnorm"}\NormalTok{) }\SpecialCharTok{+}\NormalTok{ lseries\_max, }
+              \AttributeTok{tnegb\_max =} \FunctionTok{mean}\NormalTok{(mod }\SpecialCharTok{==} \StringTok{"tnegb"}\NormalTok{) }\SpecialCharTok{+}\NormalTok{ plnorm\_max, }
+              \AttributeTok{lseries\_min =} \DecValTok{0}\NormalTok{, }
+              \AttributeTok{plnorm\_min =}\NormalTok{ lseries\_max,}
+              \AttributeTok{tnegb\_min =}\NormalTok{ plnorm\_max) }\SpecialCharTok{|\textgreater{}} 
+    \FunctionTok{ungroup}\NormalTok{() }\SpecialCharTok{|\textgreater{}} 
+    \FunctionTok{pivot\_longer}\NormalTok{(}\AttributeTok{cols =} \SpecialCharTok{{-}}\NormalTok{abund\_bin,}
+                 \AttributeTok{names\_to =} \FunctionTok{c}\NormalTok{(}\StringTok{"model"}\NormalTok{, }\StringTok{".value"}\NormalTok{),}
+                 \AttributeTok{names\_sep =} \StringTok{"\_"}\NormalTok{) }\SpecialCharTok{|\textgreater{}} 
+    \FunctionTok{mutate}\NormalTok{(}\AttributeTok{abund\_max =} \FunctionTok{gsub}\NormalTok{(}\StringTok{".*,|}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{]"}\NormalTok{, }\StringTok{""}\NormalTok{, abund\_bin) }\SpecialCharTok{|\textgreater{}}
+               \FunctionTok{as.numeric}\NormalTok{(),}
+           \AttributeTok{abund\_min =} \FunctionTok{gsub}\NormalTok{(}\StringTok{"}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{(|,.*"}\NormalTok{, }\StringTok{""}\NormalTok{, abund\_bin) }\SpecialCharTok{|\textgreater{}}
+               \FunctionTok{as.numeric}\NormalTok{())}
+
+\FunctionTok{ggplot}\NormalTok{(sad\_select, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{xmin =}\NormalTok{ abund\_min, }\AttributeTok{xmax =}\NormalTok{ abund\_max, }
+                       \AttributeTok{ymin =}\NormalTok{ min, }\AttributeTok{ymax =}\NormalTok{ max, }\AttributeTok{fill =}\NormalTok{ model)) }\SpecialCharTok{+}
+    \FunctionTok{geom\_rect}\NormalTok{(}\AttributeTok{color =} \StringTok{"black"}\NormalTok{, }\AttributeTok{linewidth =} \FloatTok{0.5}\NormalTok{) }\SpecialCharTok{+}
+    \FunctionTok{scale\_fill\_discrete}\NormalTok{(}\AttributeTok{name =} \StringTok{"Model favored}\SpecialCharTok{\textbackslash{}n}\StringTok{by AIC"}\NormalTok{, }
+                        \AttributeTok{labels =} \FunctionTok{c}\NormalTok{(}\StringTok{"Log series"}\NormalTok{, }
+                                   \StringTok{"Poisson log normal"}\NormalTok{, }
+                                   \StringTok{"Truncated negative binomial"}\NormalTok{),}
+                        \AttributeTok{palette =} \FunctionTok{hsv}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\FloatTok{0.8}\NormalTok{, }\FloatTok{0.7}\NormalTok{, }\FloatTok{0.52}\NormalTok{), }
+                                      \FunctionTok{c}\NormalTok{(}\FloatTok{0.7}\NormalTok{, }\FloatTok{0.8}\NormalTok{, }\DecValTok{1}\NormalTok{), }
+                                      \FunctionTok{c}\NormalTok{(}\FloatTok{0.5}\NormalTok{, }\FloatTok{0.9}\NormalTok{, }\FloatTok{0.7}\NormalTok{))) }\SpecialCharTok{+}
+    \FunctionTok{xlab}\NormalTok{(}\StringTok{"Total individuals"}\NormalTok{) }\SpecialCharTok{+}
+    \FunctionTok{ylab}\NormalTok{(}\StringTok{"Proportion"}\NormalTok{) }\SpecialCharTok{+}
+    \FunctionTok{theme\_cowplot}\NormalTok{() }\SpecialCharTok{+}
+    \FunctionTok{theme}\NormalTok{(}\AttributeTok{legend.position =} \StringTok{"top"}\NormalTok{) }\SpecialCharTok{+}
+    \FunctionTok{guides}\NormalTok{(}\AttributeTok{fill =} \FunctionTok{guide\_legend}\NormalTok{(}\AttributeTok{nrow =} \DecValTok{3}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}[H]
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{SpatAggNet_supp_files/figure-pdf/fig-aic-sad-1.pdf}}
+
+}
+
+\caption{\label{fig-aic-sad}Proportion of studies favoring one of three
+possible species abundance distribution models: log series, Poisson log
+normal, truncated negative binomial. Model preference is shown across
+different different total numbers of individuals recorded by each study.
+Bins start at a width of 175 from 1 to 1,400, then expand in width
+exponentially. We see there is no consistent pattern for which model is
+favored across total number of individuals.}
+
+\end{figure}%
+
+\section{Studying networks simulated based on real abundance
+data}\label{studying-networks-simulated-based-on-real-abundance-data}
+
+Now we seek to compare the networks reconstructed from real data to
+those reconstructed from purely random data simulated by sampling SADs
+and SSADs without any true interaction/association between species.
+
+First we compute network statistics for the real data
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{obs\_nets }\OtherTok{\textless{}{-}} \FunctionTok{mclapply}\NormalTok{(obs\_dat, net\_stats, }\AttributeTok{mc.cores =}\NormalTok{ nthrd) }\SpecialCharTok{|\textgreater{}} 
+    \FunctionTok{do.call}\NormalTok{(rbind, }\AttributeTok{args =}\NormalTok{ \_) }\SpecialCharTok{|\textgreater{}} 
+    \FunctionTok{as.data.frame}\NormalTok{() }\SpecialCharTok{|\textgreater{}} 
+\NormalTok{    (\textbackslash{}(x) \{}
+\NormalTok{        x }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(}\AttributeTok{study =} \FunctionTok{rownames}\NormalTok{(x), x)}
+        \FunctionTok{rownames}\NormalTok{(x) }\OtherTok{\textless{}{-}} \ConstantTok{NULL}
+\NormalTok{        x}
+\NormalTok{    \})()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(}\FunctionTok{filter}\NormalTok{(obs\_nets, }\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(pos\_rho) }\SpecialCharTok{\&} \SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(neg\_rho)), }
+       \FunctionTok{aes}\NormalTok{(pos\_wm\_abund }\SpecialCharTok{{-}}\NormalTok{ neg\_wm\_abund)) }\SpecialCharTok{+}
+    \FunctionTok{geom\_histogram}\NormalTok{(}\AttributeTok{bins =} \DecValTok{20}\NormalTok{, }\AttributeTok{alpha =} \FloatTok{0.5}\NormalTok{, }\AttributeTok{color =} \StringTok{"black"}\NormalTok{) }\SpecialCharTok{+}
+    \FunctionTok{xlim}\NormalTok{(}\SpecialCharTok{{-}}\FloatTok{0.33}\NormalTok{, }\FloatTok{0.33}\NormalTok{)}
+
+
+\FunctionTok{ggplot}\NormalTok{(}\FunctionTok{filter}\NormalTok{(obs\_nets, }\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(pos\_rho) }\SpecialCharTok{\&} \SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(neg\_rho)), }
+       \FunctionTok{aes}\NormalTok{(pos\_rho }\SpecialCharTok{{-}}\NormalTok{ neg\_rho)) }\SpecialCharTok{+}
+    \FunctionTok{geom\_histogram}\NormalTok{(}\AttributeTok{bins =} \DecValTok{20}\NormalTok{, }\AttributeTok{alpha =} \FloatTok{0.5}\NormalTok{, }\AttributeTok{color =} \StringTok{"black"}\NormalTok{) }\SpecialCharTok{+}
+    \FunctionTok{xlim}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\SpecialCharTok{{-}}\DecValTok{2}\NormalTok{, }\DecValTok{2}\NormalTok{))}
+
+\FunctionTok{ggplot}\NormalTok{(}\FunctionTok{filter}\NormalTok{(obs\_nets, }\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(pos\_rho) }\SpecialCharTok{\&} \SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(neg\_rho)), }
+       \FunctionTok{aes}\NormalTok{(neg\_rho)) }\SpecialCharTok{+}
+    \FunctionTok{geom\_histogram}\NormalTok{(}\AttributeTok{bins =} \DecValTok{24}\NormalTok{, }\AttributeTok{alpha =} \FloatTok{0.5}\NormalTok{, }\AttributeTok{color =} \StringTok{"black"}\NormalTok{) }\SpecialCharTok{+}
+    \FunctionTok{xlim}\NormalTok{(}\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{, }\DecValTok{1}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{sim\_nets\_dat }\OtherTok{\textless{}{-}} \FunctionTok{sim\_nets}\NormalTok{(sad\_stats, }
+                         \AttributeTok{mc\_cores =}\NormalTok{ nthrd, }
+                         \AttributeTok{k\_fun =}\NormalTok{ k\_fun, }
+                         \AttributeTok{nsim =} \FunctionTok{round}\NormalTok{(}\FloatTok{1.25} \SpecialCharTok{*} \FunctionTok{sum}\NormalTok{(}\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(obs\_nets}\SpecialCharTok{$}\NormalTok{pos\_rho))))}
+\end{Highlighting}
+\end{Shaded}
+
+\section*{References}\label{references}
+\addcontentsline{toc}{section}{References}
+
+\phantomsection\label{refs}
+\begin{CSLReferences}{1}{1}
+\bibitem[\citeproctext]{ref-quarto}
+Allaire, J.J., Teague, C., Scheidegger, C., Xie, Y., Dervieux, C. \&
+Woodhull, G. (2025).
+\href{https://doi.org/10.5281/zenodo.5960048}{{Quarto}}.
+
+\bibitem[\citeproctext]{ref-calatayud2019}
+Calatayud, J., Andivia, E., Escudero, A., Melián, C.J., Bernardo-Madrid,
+R., Stoffel, M., Aponte, C., Medina, N.G., Molina-Venegas, R., Arnan,
+X., Rosvall, M., Neuman, M., Noriega, J.A., Alves-Martins, F., Draper,
+I., Luzuriaga, A., Ballesteros-Cánovas, J.A., Morales-Molino, C.,
+Ferrandis, P., Herrero, A., Pataro, L., Juen, L., Cea, A. \&
+Madrigal-González, J. (2019). Positive associations among rare species
+and their persistence in ecological assemblages. \emph{Nat Ecol Evol}.
+
+\bibitem[\citeproctext]{ref-rcore}
+R Core Team. (2018). \emph{\href{https://www.R-project.org/}{R: A
+language and environment for statistical computing}}. R Foundation for
+Statistical Computing, Vienna, Austria.
+
+\bibitem[\citeproctext]{ref-testthat}
+Wickham, H. (2011).
+\href{https://journal.r-project.org/archive/2011-1/RJournal_2011-1_Wickham.pdf}{{\emph{testthat}}:
+Get started with testing}. \emph{The R Journal}, \textbf{3}, 5--10.
+
+\bibitem[\citeproctext]{ref-roxygen2}
+Wickham, H., Danenberg, P. \& Eugster, M. (2018).
+\emph{\href{https://CRAN.R-project.org/package=roxygen2}{{\emph{roxygen2}}:
+In-line documentation for {R}}}.
+
+\end{CSLReferences}
+
+
+
+
+\end{document}
